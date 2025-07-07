@@ -1,10 +1,9 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://portfolio-r-gzgf.onrender.com', // Match backend port
+  baseURL: 'https://portfolio-r-gzgf.onrender.com', 
   timeout: 5000,
 });
-
 export const sendMessage = async (messageData) => {
   try {
     const response = await api.post('/api/contact', messageData);

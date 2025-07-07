@@ -8,9 +8,10 @@ const port = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors({
-  origin: 'https://sumukesh-portfolio.vercel.app', // or your frontend URL
-  methods: ['POST', 'GET', 'OPTIONS'],
-  allowedHeaders: ['Content-Type']
+  origin: ['https://sumukesh-portfolio.vercel.app', 'https://sumukesh-portfolio.vercel.app'],
+  methods: ['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -22,8 +23,8 @@ mongoose.connect(process.env.MONGO_URI || "mongodb+srv://sumukeshmopuram1:q47rfT
 
 // Model
 const Message = require('./models/message');
+app.options('/api/contact', cors());
 
-// Contact form endpoint
 app.post('/api/contact', async (req, res) => {
   console.log('Received POST /api/contact:', req.body);
   try {
