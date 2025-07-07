@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://portfolio-react-sljp.onrender.com', // Match backend port
+  baseURL: 'http://localhost:3001', // Match backend port
   timeout: 5000,
 });
 

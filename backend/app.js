@@ -7,7 +7,11 @@ const app = express();
 const port = process.env.PORT || 3001;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000', // or your frontend URL
+  methods: ['POST', 'GET', 'OPTIONS'],
+  allowedHeaders: ['Content-Type']
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -24,11 +28,14 @@ app.post('/api/contact', async (req, res) => {
   console.log('Received POST /api/contact:', req.body);
   try {
     if (!req.body.name || !req.body.email || !req.body.message) {
+      console.log('Missing fields:', req.body);
       return res.status(400).json({ error: 'Missing required fields' });
     }
     
     const { name, email, message } = req.body;
+    console.log('Creating message:', { name, email, message });
     const newMessage = await Message.create({ name, email, message });
+    console.log('Message created:', newMessage);
     
     res.status(201).json({ 
       success: true,
@@ -36,7 +43,8 @@ app.post('/api/contact', async (req, res) => {
       data: newMessage
     });
   } catch (error) {
-    console.error('Submission Error:', error);
+    console.error('Full Submission Error:', error);
+    console.error('Error Stack:', error.stack);
     res.status(500).json({ 
       error: 'Internal server error',
       details: error.message 
