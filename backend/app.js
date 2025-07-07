@@ -8,7 +8,7 @@ const port = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:3000', // or your frontend URL
+  origin: 'https://sumukesh-portfolio.vercel.app', // or your frontend URL
   methods: ['POST', 'GET', 'OPTIONS'],
   allowedHeaders: ['Content-Type']
 }));
