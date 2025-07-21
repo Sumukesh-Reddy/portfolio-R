@@ -1,59 +1,59 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 3001;
 
-// Middleware
 app.use(cors({
-  origin: ['https://sumukesh-portfolio.vercel.app', 'https://sumukesh-portfolio.vercel.app'],
-  methods: ['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE'],
+  origin: [
+    'https://sumukesh-portfolio.vercel.app',
+    'http://localhost:3000'
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
 }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // MongoDB Connection
-mongoose.connect(process.env.MONGO_URI || "mongodb+srv://sumukeshmopuram1:q47rfTFHMkmrHy16@messages.2nguodb.mongodb.net/?retryWrites=true&w=majority&appName=Messages")
+mongoose.connect(process.env.REACT_APP_MONGO_URI)
   .then(() => console.log('MongoDB Connected'))
   .catch(err => console.error('MongoDB Connection Error:', err));
 
-// Model
-const Message = require('./models/message');
-app.options('/api/contact', cors());
+// Routes - Simplified
+app.get('/', (req, res) => {
+  res.send('Backend is running');
+});
 
+// Contact Route
+const Message = require('./models/message');
 app.post('/api/contact', async (req, res) => {
-  console.log('Received POST /api/contact:', req.body);
   try {
-    if (!req.body.name || !req.body.email || !req.body.message) {
-      console.log('Missing fields:', req.body);
-      return res.status(400).json({ error: 'Missing required fields' });
-    }
-    
     const { name, email, message } = req.body;
-    console.log('Creating message:', { name, email, message });
     const newMessage = await Message.create({ name, email, message });
-    console.log('Message created:', newMessage);
-    
-    res.status(201).json({ 
-      success: true,
-      message: 'Message saved successfully',
-      data: newMessage
-    });
+    res.status(201).json({ success: true, data: newMessage });
   } catch (error) {
-    console.error('Full Submission Error:', error);
-    console.error('Error Stack:', error.stack);
-    res.status(500).json({ 
-      error: 'Internal server error',
-      details: error.message 
-    });
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Location Route
+const Location = require('./models/location');
+app.post('/api/location', async (req, res) => {
+  try {
+    const { latitude, longitude } = req.body;
+    const newLocation = await Location.create({ latitude, longitude });
+    res.status(201).json({ success: true, data: newLocation });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
 // Start server
 app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
+  console.log(`Server running on port ${port}`);
 });
