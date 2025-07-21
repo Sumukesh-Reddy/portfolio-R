@@ -1,7 +1,9 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://portfolio-r-gzgf.onrender.com',
+  baseURL: process.env.NODE_ENV === 'development' 
+    ? 'http://localhost:3001' 
+    : 'https://portfolio-r-gzgf.onrender.com',
   timeout: 5000,
   withCredentials: true,
 });
