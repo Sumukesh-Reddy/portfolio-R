@@ -6,6 +6,7 @@ import Projects from './components/Projects';  // Ensure correct import
 import Skills from './components/Skills';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
+import Certificates from './components/Certificates';
 import './styles/main.css';
 import { useEffect } from 'react';
 import { sendLocation } from './services/api';
@@ -44,7 +45,8 @@ function App() {
               <>
                 <Hero />
                 <About />
-                <Projects />  
+                <Projects />
+                <Certificates />  
                 <Skills />
                 <Contact />
               </>
