@@ -12,12 +12,12 @@ const Hero = () => {
   useEffect(() => {
     const words = [
       'Full Stack Developer',
-      'Software Engineer',
-      'Web Developer',
-      'Open Source Contributor',
-      'Competitive Programmer',
-      'Machine Learning Engineer',
-      'Gammer'
+      // 'Software Engineer',
+      // 'Web Developer',
+      // 'Open Source Contributor',
+      // 'Competitive Programmer',
+      // 'Machine Learning Engineer',
+      // 'Gammer'
     ];
     const handleTyping = () => {
       const current = index % words.length;
