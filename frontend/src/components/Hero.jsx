@@ -11,7 +11,7 @@ const Hero = () => {
 
   useEffect(() => {
     const words = [
-      'Full Stack Developer',
+      // 'Full Stack Developer',
       // 'Software Engineer',
       // 'Web Developer',
       // 'Open Source Contributor',
@@ -49,7 +49,7 @@ const Hero = () => {
       <div className="container hero-container">
         <div className="hero-text">
           <h1>Hi, I'm <span className="highlight">Sumukesh Reddy</span></h1>
-          <p>I am a <span className="typing-effect">{currentWord}</span><span className="cursor">|</span></p>
+          
           <div className="hero-buttons">
             <a href="#projects" className="btn">View Projects</a>
             <a 
