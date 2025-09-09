@@ -23,13 +23,13 @@ const Hero = () => {
       const current = index % words.length;
       const fullWord = words[current];
 
-      if (isDeleting) {
-        setCurrentWord(fullWord.substring(0, currentWord.length - 1));
-        setTypingSpeed(75);
-      } else {
-        setCurrentWord(fullWord.substring(0, currentWord.length + 1));
-        setTypingSpeed(150);
-      }
+      // if (isDeleting) {
+      //   setCurrentWord(fullWord.substring(0, currentWord.length - 1));
+      //   setTypingSpeed(75);
+      // } else {
+      //   setCurrentWord(fullWord.substring(0, currentWord.length + 1));
+      //   setTypingSpeed(150);
+      // }
 
       if (!isDeleting && currentWord === fullWord) {
         setTimeout(() => setIsDeleting(true), 1000);
