@@ -41,7 +41,8 @@ const Certificates = () => {
             <div 
               key={certificate.id} 
               className="certificate-card"
-              onClick={() => toggleExpand(certificate.id)}
+              onMouseEnter={() => toggleExpand(certificate.id)}   
+              onMouseLeave={() => toggleExpand(null)}  
             >
               <h3>{certificate.title}</h3>
               <div className="certificate-meta">
