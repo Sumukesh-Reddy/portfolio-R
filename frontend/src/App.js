@@ -7,6 +7,7 @@ import Skills from './components/Skills';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import Certificates from './components/Certificates';
+import Achievements from './components/Achievments';
 import './styles/main.css';
 import { useEffect } from 'react';
 import { sendLocation } from './services/api';
@@ -45,6 +46,7 @@ function App() {
               <>
                 <Hero />
                 <About />
+                <Achievements />
                 <Projects />
                 <Certificates />  
                 <Skills />

@@ -30,6 +30,7 @@ const Header = () => {
               <ul className={isMenuOpen ? 'active' : ''}>
                 <li><a href="#home" className="active">Home</a></li>
                 <li><a href="#about">About</a></li>
+                <li><a href="#achievements">Position</a></li>
                 <li><a href="#projects">Projects</a></li>
                 <li><a href="#certificates">Certificates</a></li>
                 <li><a href="#skills">Skills</a></li>
