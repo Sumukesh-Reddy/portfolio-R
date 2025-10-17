@@ -67,7 +67,7 @@ const Hero = () => {
             <a href="https://github.com/Sumukesh-Reddy" target="_blank" rel="noreferrer">
               <i className="fab fa-github"></i>
             </a>
-            <a href="https://leetcode.com/u/Sumukesh/" target="_blank" rel="noreferrer">
+            <a href="https://codolio.com/profile/sumukesh" target="_blank" rel="noreferrer">
               <i className="fas fa-code"></i>
             </a>
           </div>
