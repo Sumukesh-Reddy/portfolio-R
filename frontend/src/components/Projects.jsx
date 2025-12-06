@@ -16,7 +16,7 @@ const projectsData = [
     id: 2,
     title: "Sort With Visualization",
     description: "An animated project demonstrating sorting algorithms like Bubble Sort. Uses DOM manipulation and timed delays to visually show each step of the sorting process. Colored bars and transitions help users understand how the algorithm progresses.",
-    link: "https://sumukesh-reddy.github.io/sort-with-visualization/",
+    link: "https://sort-with-visualization.vercel.app",
     linkText: "View Project →",
   },
 ];
