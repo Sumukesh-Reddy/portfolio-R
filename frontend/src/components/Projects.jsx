@@ -14,9 +14,23 @@ const projectsData = [
   },
   {
     id: 2,
+    title: "ꍡ VachoLink",
+    description: "A real-time chat application built with React, featuring secure user authentication, interactive messaging interfaces, and responsive design. Includes modern UI components like animated star backgrounds, profile management, and live online status indicators.",
+    link: "https://vacholink.vercel.app/",
+    linkText: "View Project →",
+  },
+  {
+    id: 3,
     title: "Sort With Visualization",
     description: "An animated project demonstrating sorting algorithms like Bubble Sort. Uses DOM manipulation and timed delays to visually show each step of the sorting process. Colored bars and transitions help users understand how the algorithm progresses.",
     link: "https://sort-with-visualization.vercel.app",
+    linkText: "View Project →",
+  },
+  {
+    id: 4,
+    title: "Weather",
+    description: "A simple webiste that provides current weather information for any city using the OpenWeatherMap API. Features a clean UI with dynamic background changes based on weather conditions, and displays temperature, humidity, and wind speed.",
+    link: "https://sumukesh-reddy.github.io/weather/",
     linkText: "View Project →",
   },
 ];
