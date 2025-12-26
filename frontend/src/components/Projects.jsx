@@ -28,6 +28,13 @@ const projectsData = [
   },
   {
     id: 4,
+    title: "TODO APP",
+    description: "A sleek and user-friendly TODO application built with React. Features include adding, editing, deleting tasks, marking tasks as completed, and filtering tasks based on their status, along with google authentication for secure user access.",
+    link: "https://todo-app-sumukesh.vercel.app",
+    linkText: "View Project →",
+  },
+  {
+    id: 5,
     title: "Weather",
     description: "A simple webiste that provides current weather information for any city using the OpenWeatherMap API. Features a clean UI with dynamic background changes based on weather conditions, and displays temperature, humidity, and wind speed.",
     link: "https://sumukesh-reddy.github.io/weather/",
