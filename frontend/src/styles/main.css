@@ -1,6 +1,465 @@
 @import './variables.css'; /* inside main.css */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--light);
+    color: var(--dark);
+    line-height: 1.6;
+    transition: var(--transition);
+    position: relative;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+/* Light Mode - Sun Theme Background */
+body:not(.dark-mode) {
+    background: linear-gradient(180deg, var(--sky-blue) 0%, #ffffff 100%);
+    background-attachment: fixed;
+}
+
+/* Dark Mode - Stars Background */
+.dark-mode body {
+    background: linear-gradient(180deg, var(--night-sky) 0%, #0a0a0a 100%);
+    background-attachment: fixed;
+}
+
+.stars-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.star {
+    position: absolute;
+    background-color: var(--star-color);
+    border-radius: 50%;
+    animation: twinkle var(--duration) infinite alternate;
+}
+
+.star.small {
+    width: 1px;
+    height: 1px;
+    box-shadow: 0 0 2px var(--star-glow);
+}
+
+.star.medium {
+    width: 2px;
+    height: 2px;
+    box-shadow: 0 0 4px var(--star-glow);
+}
+
+.star.large {
+    width: 3px;
+    height: 3px;
+    box-shadow: 0 0 6px var(--star-glow);
+}
+
+.star.blue {
+    background-color: var(--twinkle-blue);
+    box-shadow: 0 0 8px rgba(114, 137, 218, 0.8);
+}
+
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+section {
+    padding: 6rem 0;
+    position: relative;
+    z-index: 1;
+}
+
+h1, h2, h3 {
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+h1 {
+    font-size: clamp(2.5rem, 8vw, 3.5rem);
+}
+
+h2 {
+    font-size: clamp(2rem, 6vw, 2.8rem);
+    margin-bottom: 3rem;
+    position: relative;
+    display: inline-block;
+}
+
+h2::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    border-radius: 2px;
+}
+
+/* Header Styles */
+header {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    background-color: rgba(255, 255, 255, 0.95);
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    backdrop-filter: blur(10px);
+}
+
+.dark-mode header {
+    background-color: rgba(15, 23, 42, 0.95);
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 0;
+}
+
+.logo h1 {
+    font-size: 1.8rem;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+}
+
+nav ul li a {
+    font-weight: 600;
+    color: var(--dark);
+    text-decoration: none;
+    position: relative;
+    padding: 0.5rem 0;
+    transition: var(--transition);
+}
+
+.dark-mode nav ul li a {
+    color: var(--light);
+}
+
+nav ul li a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--primary);
+    transition: var(--transition);
+}
+
+nav ul li a:hover::after,
+nav ul li a.active::after {
+    width: 100%;
+}
+
+.theme-toggle button {
+    background: none;
+    border: none;
+    color: var(--dark);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: var(--transition);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(99, 102, 241, 0.1);
+}
+
+.dark-mode .theme-toggle button {
+    color: var(--light);
+}
+
+.theme-toggle button:hover {
+    background: rgba(99, 102, 241, 0.2);
+    transform: rotate(30deg);
+}
+
+.hamburger {
+    display: none;
+    cursor: pointer;
+}
+
+.hamburger div {
+    width: 25px;
+    height: 3px;
+    background-color: var(--dark);
+    margin: 5px;
+    transition: var(--transition);
+}
+
+.dark-mode .hamburger div {
+    background-color: var(--gray);
+}
+
+/* Hero Section */
+.hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding-top: 80px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Light mode hero background */
+body:not(.dark-mode) .hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: radial-gradient(circle at 80% 20%, rgba(251, 191, 36, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+/* Dark mode hero background */
+.dark-mode .hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.hero-container {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    position: relative;
+    z-index: 1;
+}
+
+.hero-text {
+    flex: 1;
+}
+
+.hero-text h1 {
+    margin-bottom: 1.5rem;
+}
+
+.hero-text p {
+    font-size: 1.2rem;
+    color: var(--gray);
+    margin-bottom: 2rem;
+    max-width: 600px;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.hero-image {
+    flex: 1;
+    position: relative;
+}
+
+.hero-image img {
+    width: 100%;
+    max-width: 400px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.hero-image img:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 30px 50px rgba(99, 102, 241, 0.6);
+}
+
+.social-links {
+    display: flex;
+    gap: 1rem;
+}
+
+.social-links a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--light-gray);
+    color: var(--dark);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.social-links a::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: 0.5s;
+}
+
+.social-links a:hover::before {
+    left: 100%;
+}
+
+.dark-mode .social-links a {
+    background-color: var(--gray);
+    color: var(--light);
+}
+
+.social-links a:hover {
+    background-color: var(--primary);
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 20px 40px rgba(99, 102, 241, 0.7);
+}
+
+/* ... rest of your existing CSS remains the same ... */
+
+/* Add these new animations at the end of your CSS file */
+.shooting-star {
+    position: absolute;
+    width: 120px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--star-color));
+    opacity: 0;
+    pointer-events: none;
+    animation-name: shootStar;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+@keyframes shootStar {
+    0% {
+        opacity: 0;
+        transform: translate(0, 0);
+    }
+    10% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translate(var(--dx), var(--dy));
+    }
+}
+
+/* Cloud animations for light mode */
+@keyframes cloudFloat {
+    0%, 100% {
+        transform: translateX(-100px) translateY(0);
+    }
+    50% {
+        transform: translateX(calc(100vw + 100px)) translateY(-20px);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .sun-container {
+        top: 20px;
+        right: 20px;
+        width: 40px;
+        height: 40px;
+    }
+    
+    .hero-container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .hero-buttons {
+        justify-content: center;
+    }
+
+    .social-links {
+        justify-content: center;
+    }
+
+    .about-content {
+        grid-template-columns: 1fr;
+    }
+
+    .about-details {
+        grid-template-columns: 1fr;
+    }
+
+    nav ul {
+        position: fixed;
+        top: 80px;
+        left: -100%;
+        width: 100%;
+        height: calc(100vh - 80px);
+        background-color: white;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 2rem;
+        transition: var(--transition);
+        backdrop-filter: blur(10px);
+    }
+
+    .dark-mode nav ul {
+        background-color: rgba(15, 23, 42, 0.95);
+    }
+
+    nav ul.active {
+        left: 0;
+    }
+
+    .hamburger {
+        display: block;
+    }
+
+    .hamburger.active div:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    .hamburger.active div:nth-child(2) {
+        opacity: 0;
+    }
+
+    .hamburger.active div:nth-child(3) {
+        transform: rotate(-45deg) translate(5px, -5px);
+    }
+}
 
 /* Base Styles */
 * {

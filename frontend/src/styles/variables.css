@@ -12,6 +12,13 @@
     --border-radius: 8px;
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Sun theme colors */
+    --sun-yellow: #fbbf24;
+    --sun-orange: #f97316;
+    --sun-glow: rgba(251, 191, 36, 0.3);
+    --sky-blue: #e0f2fe;
+    --cloud-white: rgba(255, 255, 255, 0.9);
 }
 
 .dark-mode {
@@ -19,4 +26,10 @@
     --dark: #f8fafc; 
     --gray: #94a3b8;
     --light-gray: #1e293b;
+    
+    /* Night sky colors */
+    --star-color: #ffffff;
+    --star-glow: rgba(255, 255, 255, 0.8);
+    --night-sky: #0a0e17;
+    --twinkle-blue: rgba(114, 137, 218, 0.5);
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import heroImage from '../assets/images/bobby.jpg';
+import heroImage from '../assets/images/bobby1.jpg';
 import '../hooks/useScrollAnimation';
 
 const Hero = () => {
