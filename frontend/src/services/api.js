@@ -4,7 +4,7 @@ const api = axios.create({
   baseURL: process.env.NODE_ENV === 'development' 
     ? 'http://localhost:3001' 
     : 'https://portfolio-r-gzgf.onrender.com',
-  timeout: 5000,
+  timeout: 50000,
   withCredentials: true,
 });
 
