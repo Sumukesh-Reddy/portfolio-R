@@ -1394,7 +1394,7 @@ footer {
     }
   }
   
-
+/* Add to main.css */
 .profile-link {
     transition: var(--transition);
   }
@@ -1409,9 +1409,9 @@ footer {
     background-color: var(--primary) !important;
     color: white !important;
   }
-  
+  /* Ensure flip card back content scrolls if needed */
 .flip-card-back {
-    overflow-y: auto;
-    max-height: 100%;
-    padding: 1rem;
-  }
+  overflow-y: auto;
+  max-height: 100%;
+  padding: 1rem;
+}

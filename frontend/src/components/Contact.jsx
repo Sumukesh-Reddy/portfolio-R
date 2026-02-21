@@ -1,9 +1,11 @@
-import { useState } from 'react';
-import { sendMessage } from '../services/api';
+// components/Contact.jsx
+import { useState, useRef } from 'react';
+import emailjs from '@emailjs/browser';
 import '../styles/main.css';
 import '../hooks/useScrollAnimation';
 
 const Contact = () => {
+  const formRef = useRef();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -11,6 +13,11 @@ const Contact = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [notification, setNotification] = useState(null);
+
+  // Replace these with your actual EmailJS credentials
+  const EMAILJS_SERVICE_ID = 'your_service_id';
+  const EMAILJS_TEMPLATE_ID = 'your_template_id';
+  const EMAILJS_PUBLIC_KEY = 'your_public_key';
 
   const handleChange = (e) => {
     setFormData({
@@ -26,17 +33,39 @@ const Contact = () => {
       showNotification('Please fill in all fields', 'error');
       return;
     }
+
+    // Simple email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      showNotification('Please enter a valid email address', 'error');
+      return;
+    }
   
     setIsSubmitting(true);
     
     try {
-      await sendMessage(formData);
-      showNotification('Message sent successfully!', 'success');
-      setFormData({ name: '', email: '', message: '' });
+      // Send email using EmailJS
+      const result = await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          message: formData.message,
+          to_email: 'your-email@gmail.com', // Your email where you want to receive messages
+          reply_to: formData.email
+        },
+        EMAILJS_PUBLIC_KEY
+      );
+
+      if (result.status === 200) {
+        showNotification('Message sent successfully! I\'ll get back to you soon.', 'success');
+        setFormData({ name: '', email: '', message: '' });
+      }
     } catch (error) {
-      console.error('Form submission error:', error);
+      console.error('Email sending error:', error);
       showNotification(
-        error.message || 'Failed to send message. Please try again.', 
+        'Failed to send message. Please try again or email me directly at sumukeshreddy.m23@iiits.in', 
         'error'
       );
     } finally {
@@ -46,14 +75,14 @@ const Contact = () => {
 
   const showNotification = (message, type) => {
     setNotification({ message, type });
-    setTimeout(() => setNotification(null), 3000);
+    setTimeout(() => setNotification(null), 5000);
   };
 
   return (
     <section id="contact" className="section">
       <div className="container">
         <h2 className="section-title">Contact Me</h2>
-        <form className="contact-form" onSubmit={handleSubmit}>
+        <form ref={formRef} className="contact-form" onSubmit={handleSubmit}>
           <input
             type="text"
             name="name"
@@ -76,15 +105,34 @@ const Contact = () => {
             value={formData.message}
             onChange={handleChange}
             required
+            rows="5"
           ></textarea>
           <button 
             type="submit" 
             className="btn" 
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Sending...' : 'Send Message'}
+            {isSubmitting ? (
+              <>
+                <i className="fas fa-spinner fa-spin"></i> Sending...
+              </>
+            ) : (
+              'Send Message'
+            )}
           </button>
         </form>
+        
+        {/* Alternative contact info */}
+        <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+          <p>Or reach me directly at:</p>
+          <p>
+            <i className="fas fa-envelope"></i>{' '}
+            <a href="mailto:sumukeshreddy.m23@iiits.in" style={{ color: 'var(--primary)' }}>
+              sumukeshreddy.m23@iiits.in
+            </a>
+          </p>
+        </div>
+
         {notification && (
           <div className={`notification ${notification.type}`}>
             {notification.message}
