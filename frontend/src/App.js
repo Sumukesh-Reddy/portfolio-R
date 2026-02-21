@@ -12,6 +12,7 @@ import Achievements from './components/Achievments';
 import './styles/main.css';
 import { sendLocation } from './services/api';
 import './styles/main.css';
+import CodingProfiles from './components/CodingProfiles';
 
 function App() {
   const [stars, setStars] = useState([]);
@@ -164,6 +165,7 @@ function App() {
                 <Hero />
                 <About />
                 <Achievements />
+                  <CodingProfiles />
                 <Projects />
                 <Certificates />  
                 <Skills />
