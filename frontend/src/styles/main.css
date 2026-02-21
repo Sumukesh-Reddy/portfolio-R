@@ -1415,3 +1415,50 @@ footer {
   max-height: 100%;
   padding: 1rem;
 }
+/* Coding Profiles Section */
+#coding-profiles {
+    background-color: var(--section-bg);
+    transition: var(--transition);
+  }
+  
+  .profile-card {
+    background-color: var(--card-bg);
+    transition: all 0.3s ease;
+    border: 1px solid var(--light-gray);
+  }
+  
+  .dark-mode .profile-card {
+    background-color: var(--light-gray);
+    border-color: var(--gray);
+  }
+  
+  .profile-card h3,
+  .profile-card p {
+    transition: color 0.3s ease;
+  }
+  
+  .dark-mode .profile-card h3 {
+    color: var(--light);
+  }
+  
+  .dark-mode .profile-card p {
+    color: var(--gray);
+  }
+  
+  /* Loading animation */
+  @keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    #coding-profiles {
+      padding: 3rem 0;
+    }
+    
+    .profile-card {
+      padding: 1.2rem !important;
+    }
+  }

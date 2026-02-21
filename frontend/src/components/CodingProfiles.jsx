@@ -6,7 +6,6 @@ const CodingProfiles = () => {
   const [leetcodeData, setLeetcodeData] = useState(null);
   const [codeforcesData, setCodeforcesData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [flippedCard, setFlippedCard] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,156 +47,220 @@ const CodingProfiles = () => {
     fetchData();
   }, []);
 
-  const handleCardClick = (index) => {
-    setFlippedCard(flippedCard === index ? null : index);
-  };
+  const profiles = [
+    {
+      id: 'leetcode',
+      name: 'LeetCode',
+      username: 'Sumukesh',
+      rating: leetcodeData?.rating || 1764,
+      solved: leetcodeData?.totalSolved || 555,
+      rank: '75,628',
+      icon: 'fas fa-code',
+      color: '#FFA116',
+      bgColor: 'rgba(255, 161, 22, 0.1)',
+      link: 'https://leetcode.com/u/Sumukesh/'
+    },
+    {
+      id: 'codeforces',
+      name: 'Codeforces',
+      username: 'Sumukesh',
+      rating: codeforcesData?.rating || 'N/A',
+      solved: codeforcesData?.solvedCount || 0,
+      rank: codeforcesData?.rank || 'N/A',
+      icon: 'fas fa-trophy',
+      color: '#1F8ACB',
+      bgColor: 'rgba(31, 138, 203, 0.1)',
+      link: 'https://codeforces.com/profile/Sumukesh'
+    }
+  ];
 
   if (loading) {
     return (
       <section id="coding-profiles" className="section">
         <div className="container">
           <h2 className="section-title">Coding Profiles</h2>
-          <div className="skills-flip-container">
-            <div className="flip-card">
-              <div className="flip-card-inner">
-                <div className="flip-card-front">Loading Stats...</div>
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+            gap: '1.5rem',
+            marginTop: '2rem'
+          }}>
+            {[1, 2].map(i => (
+              <div key={i} style={{
+                background: 'var(--card-bg)',
+                borderRadius: 'var(--border-radius)',
+                padding: '1.5rem',
+                boxShadow: 'var(--shadow)',
+                animation: 'pulse 1.5s infinite'
+              }}>
+                <div style={{ height: '20px', background: 'var(--light-gray)', marginBottom: '1rem', borderRadius: '4px' }}></div>
+                <div style={{ height: '20px', background: 'var(--light-gray)', marginBottom: '1rem', borderRadius: '4px', width: '70%' }}></div>
               </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
     );
   }
 
-  const profiles = [
-    {
-      id: 'leetcode',
-      title: 'LeetCode',
-      icon: 'fab fa-leanpub',
-      frontContent: (
-        <div style={{ textAlign: 'center' }}>
-          <i className="fas fa-code" style={{ fontSize: '2rem', marginBottom: '1rem' }}></i>
-          <h3>Rating: {leetcodeData?.rating || 1764}</h3>
-          <p>Global Rank: 75,628/839,080</p>
-        </div>
-      ),
-      backContent: (
-        <div className="skills-list">
-          <div className="skill">
-            <span>Problems Solved: 555</span>
-            <div className="skill-bar">
-              <div className="skill-progress" style={{ width: '55%' }}></div>
-            </div>
-          </div>
-          <div className="skill">
-            <span>Easy: 236</span>
-            <div className="skill-bar">
-              <div className="skill-progress" style={{ width: '33%' }}></div>
-            </div>
-          </div>
-          <div className="skill">
-            <span>Medium: 287</span>
-            <div className="skill-bar">
-              <div className="skill-progress" style={{ width: '41%' }}></div>
-            </div>
-          </div>
-          <div className="skill">
-            <span>Hard: 20</span>
-            <div className="skill-bar">
-              <div className="skill-progress" style={{ width: '3%' }}></div>
-            </div>
-          </div>
-          <div className="skill">
-            <span>Contests Attended: 31</span>
-            <div className="skill-bar">
-              <div className="skill-progress" style={{ width: '100%' }}></div>
-            </div>
-          </div>
-          <div className="skill">
-            <span>Badges: 8</span>
-            <div className="skill-bar">
-              <div className="skill-progress" style={{ width: '80%' }}></div>
-            </div>
-          </div>
-        </div>
-      ),
-      link: 'https://leetcode.com/u/Sumukesh/'
-    },
-    {
-      id: 'codeforces',
-      title: 'Codeforces',
-      icon: 'fas fa-chart-line',
-      frontContent: (
-        <div style={{ textAlign: 'center' }}>
-          <i className="fas fa-trophy" style={{ fontSize: '2rem', marginBottom: '1rem' }}></i>
-          <h3>Rating: {codeforcesData?.rating || 'N/A'}</h3>
-          <p>Rank: {codeforcesData?.rank || 'N/A'}</p>
-        </div>
-      ),
-      backContent: (
-        <div className="skills-list">
-          <div className="skill">
-            <span>Problems Solved: {codeforcesData?.solvedCount || 0}</span>
-            <div className="skill-bar">
-              <div className="skill-progress" style={{ width: '45%' }}></div>
-            </div>
-          </div>
-          <div className="skill">
-            <span>Max Rating: {codeforcesData?.maxRating || 0}</span>
-            <div className="skill-bar">
-              <div className="skill-progress" style={{ width: '70%' }}></div>
-            </div>
-          </div>
-          <div className="skill">
-            <span>Contribution: {codeforcesData?.contribution || 0}</span>
-            <div className="skill-bar">
-              <div className="skill-progress" style={{ width: '50%' }}></div>
-            </div>
-          </div>
-        </div>
-      ),
-      link: 'https://codeforces.com/profile/Sumukesh'
-    }
-  ];
-
   return (
     <section id="coding-profiles" className="section">
       <div className="container">
         <h2 className="section-title">Coding Profiles</h2>
-        <div className="skills-flip-container">
-          {profiles.map((profile, index) => (
-            <div 
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+          gap: '1.5rem',
+          marginTop: '2rem'
+        }}>
+          {profiles.map(profile => (
+            <a
               key={profile.id}
-              className="flip-card"
-              onClick={() => handleCardClick(index)}
+              href={profile.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ textDecoration: 'none' }}
             >
-              <div className={`flip-card-inner ${flippedCard === index ? 'flipped' : ''}`}>
-                <div className="flip-card-front">
-                  {profile.frontContent}
+              <div className="profile-card" style={{
+                background: 'var(--card-bg)',
+                borderRadius: 'var(--border-radius)',
+                padding: '1.5rem',
+                boxShadow: 'var(--shadow)',
+                transition: 'var(--transition)',
+                border: '1px solid var(--light-gray)',
+                cursor: 'pointer',
+                position: 'relative',
+                overflow: 'hidden'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-5px)';
+                e.currentTarget.style.boxShadow = '0 10px 30px rgba(99, 102, 241, 0.2)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'var(--shadow)';
+              }}
+              >
+                {/* Background icon */}
+                <div style={{
+                  position: 'absolute',
+                  right: '10px',
+                  bottom: '10px',
+                  fontSize: '4rem',
+                  opacity: '0.1',
+                  color: profile.color
+                }}>
+                  <i className={profile.icon}></i>
                 </div>
-                <div className="flip-card-back">
-                  {profile.backContent}
-                  <a 
-                    href={profile.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="profile-link"
-                    style={{
-                      marginTop: '1rem',
-                      padding: '0.5rem 1rem',
-                      backgroundColor: 'var(--primary)',
-                      color: 'white',
-                      borderRadius: 'var(--border-radius)',
-                      textDecoration: 'none',
-                      display: 'inline-block'
-                    }}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    View Profile <i className="fas fa-external-link-alt"></i>
-                  </a>
+                
+                {/* Header */}
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+                  <div style={{
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '50%',
+                    background: profile.bgColor,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginRight: '1rem',
+                    color: profile.color,
+                    fontSize: '1.2rem'
+                  }}>
+                    <i className={profile.icon}></i>
+                  </div>
+                  <div>
+                    <h3 style={{ 
+                      margin: 0, 
+                      fontSize: '1.2rem', 
+                      fontWeight: '600',
+                      color: 'var(--dark)'
+                    }}>
+                      {profile.name}
+                    </h3>
+                    <p style={{ 
+                      margin: 0, 
+                      fontSize: '0.9rem', 
+                      color: 'var(--gray)'
+                    }}>
+                      @{profile.username}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Stats */}
+                <div style={{ 
+                  display: 'grid', 
+                  gridTemplateColumns: '1fr 1fr', 
+                  gap: '1rem',
+                  marginBottom: '1rem'
+                }}>
+                  <div>
+                    <p style={{ 
+                      margin: 0, 
+                      fontSize: '0.8rem', 
+                      color: 'var(--gray)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px'
+                    }}>
+                      Rating
+                    </p>
+                    <p style={{ 
+                      margin: 0, 
+                      fontSize: '1.3rem', 
+                      fontWeight: '700',
+                      color: profile.color
+                    }}>
+                      {profile.rating}
+                    </p>
+                  </div>
+                  <div>
+                    <p style={{ 
+                      margin: 0, 
+                      fontSize: '0.8rem', 
+                      color: 'var(--gray)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px'
+                    }}>
+                      Solved
+                    </p>
+                    <p style={{ 
+                      margin: 0, 
+                      fontSize: '1.3rem', 
+                      fontWeight: '700',
+                      color: 'var(--primary)'
+                    }}>
+                      {profile.solved}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Additional info */}
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  paddingTop: '1rem',
+                  borderTop: '1px solid var(--light-gray)'
+                }}>
+                  <span style={{
+                    fontSize: '0.85rem',
+                    color: 'var(--gray)'
+                  }}>
+                    {profile.id === 'leetcode' ? 'Global Rank' : 'Rank'}: {profile.rank}
+                  </span>
+                  <span style={{
+                    fontSize: '0.85rem',
+                    color: 'var(--primary)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.3rem'
+                  }}>
+                    Visit <i className="fas fa-arrow-right" style={{ fontSize: '0.7rem' }}></i>
+                  </span>
                 </div>
               </div>
-            </div>
+            </a>
           ))}
         </div>
       </div>

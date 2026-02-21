@@ -1,6 +1,5 @@
 // components/Contact.jsx
-import { useState, useRef } from 'react';
-import emailjs from '@emailjs/browser';
+import { useState, useRef, useEffect } from 'react';
 import '../styles/main.css';
 import '../hooks/useScrollAnimation';
 
@@ -13,11 +12,28 @@ const Contact = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [notification, setNotification] = useState(null);
+  const [emailjsLoaded, setEmailjsLoaded] = useState(false);
+
+  // Load EmailJS script
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
+    script.onload = () => {
+      if (window.emailjs) {
+        window.emailjs.init('YOUR_PUBLIC_KEY'); // Replace with your actual public key
+        setEmailjsLoaded(true);
+      }
+    };
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   // Replace these with your actual EmailJS credentials
   const EMAILJS_SERVICE_ID = 'your_service_id';
   const EMAILJS_TEMPLATE_ID = 'your_template_id';
-  const EMAILJS_PUBLIC_KEY = 'your_public_key';
 
   const handleChange = (e) => {
     setFormData({
@@ -40,22 +56,26 @@ const Contact = () => {
       showNotification('Please enter a valid email address', 'error');
       return;
     }
+
+    if (!emailjsLoaded) {
+      showNotification('Email service is loading. Please try again.', 'error');
+      return;
+    }
   
     setIsSubmitting(true);
     
     try {
       // Send email using EmailJS
-      const result = await emailjs.send(
+      const result = await window.emailjs.send(
         EMAILJS_SERVICE_ID,
         EMAILJS_TEMPLATE_ID,
         {
           from_name: formData.name,
           from_email: formData.email,
           message: formData.message,
-          to_email: 'your-email@gmail.com', // Your email where you want to receive messages
+          to_email: 'sumukeshreddy.m23@iiits.in', // Your email
           reply_to: formData.email
-        },
-        EMAILJS_PUBLIC_KEY
+        }
       );
 
       if (result.status === 200) {
@@ -110,12 +130,14 @@ const Contact = () => {
           <button 
             type="submit" 
             className="btn" 
-            disabled={isSubmitting}
+            disabled={isSubmitting || !emailjsLoaded}
           >
             {isSubmitting ? (
               <>
                 <i className="fas fa-spinner fa-spin"></i> Sending...
               </>
+            ) : !emailjsLoaded ? (
+              'Loading...'
             ) : (
               'Send Message'
             )}
