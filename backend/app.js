@@ -19,13 +19,16 @@ app.use(express.json());
 
 // Create Nodemailer transporter with Gmail SMTP
 const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
+  host: "smtp.gmail.com",
   port: 587,
-  secure: false, // true for 465, false for 587
+  secure: false, // true only for 465
   auth: {
-    user: process.env.GMAIL_USER,     // Your Gmail address
-    pass: process.env.GMAIL_APP_PASSWORD // Your 16-char App Password
-  }
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+  tls: {
+    family: 4, // FORCE IPv4
+  },
 });
 
 // Verify connection configuration
