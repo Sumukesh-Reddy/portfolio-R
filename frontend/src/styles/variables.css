@@ -1,0 +1,65 @@
+/* =====================================================
+   DESIGN TOKENS — OCEAN BLUE + PURE GLASS
+   ===================================================== */
+   :root {
+    /* ── Brand blues ── */
+    --primary:       #2563eb;   /* vivid royal blue   */
+    --primary-dark:  #1e40af;   /* deep navy blue     */
+    --secondary:     #0ea5e9;   /* sky / cyan-blue    */
+    --accent:        #38bdf8;   /* light sky blue     */
+
+    --success: #10b981;
+    --error:   #ef4444;
+
+    /* ── Radii & motion ── */
+    --border-radius:      16px;
+    --border-radius-lg:   24px;
+    --border-radius-pill: 50px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* ── Light mode text ── */
+    --text-primary:   #0f1e3d;
+    --text-secondary: #3a5070;
+
+    /* ── Light mode glass (true frosted) ── */
+    --glass-bg:          rgba(255, 255, 255, 0.62);
+    --glass-border:      rgba(147, 197, 253, 0.55);
+    --glass-shadow:      0 8px 32px rgba(30, 64, 175, 0.10),
+                         0 2px 8px  rgba(30, 64, 175, 0.06);
+    --glass-blur:        blur(24px);
+    --glass-sat:         saturate(180%);
+
+    /* ── Light mode card glass ── */
+    --card-glass-bg:     rgba(255, 255, 255, 0.52);
+    --card-glass-border: rgba(147, 197, 253, 0.45);
+    --card-glass-shadow: 0 4px 20px rgba(30, 64, 175, 0.08);
+}
+
+/* ── Dark mode ── */
+.dark-mode {
+    --primary:       #60a5fa;
+    --primary-dark:  #93c5fd;
+    --secondary:     #38bdf8;
+    --accent:        #7dd3fc;
+
+    --text-primary:   #e8f0fe;
+    --text-secondary: #7ea8c4;
+
+    /* Deep navy frosted glass */
+    --glass-bg:          rgba(6, 15, 40, 0.58);
+    --glass-border:      rgba(96, 165, 250, 0.18);
+    --glass-shadow:      0 8px 40px rgba(0, 0, 0, 0.55),
+                         0 2px 8px  rgba(0, 0, 0, 0.28);
+    --glass-blur:        blur(24px);
+    --glass-sat:         saturate(150%);
+
+    --card-glass-bg:     rgba(6, 15, 40, 0.52);
+    --card-glass-border: rgba(96, 165, 250, 0.13);
+    --card-glass-shadow: 0 4px 24px rgba(0, 0, 0, 0.40);
+
+    /* Stars */
+    --star-color:    #ffffff;
+    --star-glow:     rgba(255, 255, 255, 0.85);
+    --twinkle-blue:  rgba(147, 197, 253, 0.95);
+    --night-sky:     #060f28;
+}
