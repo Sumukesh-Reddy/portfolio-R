@@ -42,7 +42,7 @@ app.post('/api/contact', async (req, res) => {
 
     const { data, error } = await resend.emails.send({
       from: 'Portfolio Contact <onboarding@resend.dev>',
-      to: ['sumukeshreddy.m23@iiits.in'],
+      to: ['sumukeshmopuram1@gmail.com'],
       replyTo: email,
       subject: `New Message from ${name} - Portfolio`,
       html: `
