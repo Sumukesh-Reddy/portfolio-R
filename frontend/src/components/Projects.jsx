@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import '../styles/main.css';
 import '../hooks/useScrollAnimation';
 
@@ -172,7 +173,7 @@ const Projects = () => {
       </div>
 
       {/* Full-screen live preview modal */}
-      {previewProject && (
+      {previewProject && createPortal(
         <div
           className="preview-modal-overlay"
           onClick={closePreview}
@@ -234,7 +235,8 @@ const Projects = () => {
               />
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </section>
   );
