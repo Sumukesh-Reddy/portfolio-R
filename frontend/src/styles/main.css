@@ -1749,7 +1749,7 @@ footer p + p {
     nav ul.active {
         opacity: 1;
         transform: translateY(0);
-        pointer-events: all;
+        pointer-events: auto;
     }
     nav ul li a {
         font-size: 1rem;
@@ -2404,7 +2404,7 @@ footer {
     nav ul.active {
         opacity: 1;
         transform: translateY(0);
-        pointer-events: all;
+        pointer-events: auto;
     }
     nav ul li a {
         font-size: 1rem !important;

@@ -9,7 +9,9 @@ const port = process.env.PORT || 3001;
 app.use(cors({
   origin: [
     'https://sumukesh-portfolio.vercel.app',
-    'http://localhost:3000'
+    'http://localhost:3000',
+    'https://www.sumukesh.app',
+    'https://sumukesh.app'
   ],
   credentials: true
 }));
