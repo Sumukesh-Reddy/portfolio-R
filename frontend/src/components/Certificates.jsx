@@ -31,6 +31,24 @@ const certificatesData = [
     link: "https://infyspringboard.onwingspan.com/public-assets/infosysheadstart/cert/lex_auth_01458067585410662487/4c185e3b-d60d-4967-a4b1-b7952bb75e9e.pdf",
     linkText: "View Certificate",
   },
+  {
+    id: 4,
+    title: "Improving Deep Neural Networks: Hyperparameter Tuning, Regularization and Optimization",
+    issuer: "Coursera",
+    date: "",
+    description: "Learned techniques for hyperparameter tuning, regularization, and optimization to improve deep neural networks.",
+    link: "https://coursera.org/share/1548351c6c11b5cc326ae5bc1f932cde",
+    linkText: "View Certificate",
+  },
+  {
+    id: 5,
+    title: "Neural Networks and Deep Learning",
+    issuer: "Coursera",
+    date: "",
+    description: "Learned foundational concepts of neural networks and deep learning.",
+    link: "https://coursera.org/share/e7e11fd4103cd2cf27ae67d47b9a0686",
+    linkText: "View Certificate",
+  },
 
 ];
 
