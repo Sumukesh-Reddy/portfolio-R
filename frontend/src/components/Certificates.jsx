@@ -22,6 +22,15 @@ const certificatesData = [
     link: "https://www.udemy.com/certificate/UC-6ae0c769-0de4-454f-99d7-e795d9d33ab7/",
     linkText: "View Certificate",
   },
+  {
+    id: 3,
+    title: "Infosys Springboard Internship",
+    issuer: "Infosys",
+    date: "Internship",
+    description: "Successfully completed an internship program through Infosys Springboard.",
+    link: "https://infyspringboard.onwingspan.com/public-assets/infosysheadstart/cert/lex_auth_01458067585410662487/4c185e3b-d60d-4967-a4b1-b7952bb75e9e.pdf",
+    linkText: "View Certificate",
+  },
 
 ];
 
