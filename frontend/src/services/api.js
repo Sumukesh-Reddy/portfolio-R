@@ -29,17 +29,35 @@ export const sendMessage = async (messageData) => {
 /**
  * Create a new chatbot session. Returns { sessionId }.
  */
-export const createChatSession = async () => {
-  const response = await api.post('/api/chat/session');
-  return response.data; // { sessionId }
+export const createChatSession = async (retries = 3) => {
+  try {
+    const response = await api.post('/api/chat/session');
+    return response.data; // { sessionId }
+  } catch (error) {
+    if (error.response?.status === 502 && retries > 0) {
+      console.warn(`Server waking up, retrying session init... (${retries} left)`);
+      await new Promise(r => setTimeout(r, 3000));
+      return createChatSession(retries - 1);
+    }
+    throw error;
+  }
 };
 
 /**
  * Send a message to the chatbot. Returns { answer }.
  */
-export const sendChatMessage = async (sessionId, message) => {
-  const response = await api.post('/api/chat/message', { sessionId, message });
-  return response.data; // { answer }
+export const sendChatMessage = async (sessionId, message, retries = 2) => {
+  try {
+    const response = await api.post('/api/chat/message', { sessionId, message });
+    return response.data; // { answer }
+  } catch (error) {
+    if (error.response?.status === 502 && retries > 0) {
+      console.warn(`Server waking up, retrying send message... (${retries} left)`);
+      await new Promise(r => setTimeout(r, 3000));
+      return sendChatMessage(sessionId, message, retries - 1);
+    }
+    throw error;
+  }
 };
 
 /**
@@ -56,4 +74,23 @@ export const getChatHistory = async (sessionId) => {
  */
 export const wakeBackend = () => {
   api.get('/api/wake', { timeout: 15000 }).catch(() => {});
+};
+
+/* ── Admin Dashboard API ── */
+
+export const requestAdminOtp = async (email) => {
+  const response = await api.post('/api/admin/request-otp', { email });
+  return response.data;
+};
+
+export const verifyAdminOtp = async (email, otp) => {
+  const response = await api.post('/api/admin/verify-otp', { email, otp });
+  return response.data;
+};
+
+export const getAllSessions = async (token) => {
+  const response = await api.get('/api/admin/sessions', {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
 };

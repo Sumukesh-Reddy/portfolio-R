@@ -13,6 +13,7 @@ import './styles/main.css';
 import './styles/chatbot.css';
 import CodingProfiles from './components/CodingProfiles';
 import Chatbot from './components/Chatbot';
+import AdminDashboard from './admin/AdminDashboard';
 import { wakeBackend } from './services/api';
 
 function App() {
@@ -138,6 +139,7 @@ function App() {
         <Header />
         <main>
           <Routes>
+            <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/" element={
               <>
                 <Hero />
@@ -152,8 +154,12 @@ function App() {
             } />
           </Routes>
         </main>
-        <Footer />
-        <Chatbot />
+        <Routes>
+          <Route path="/" element={<Footer />} />
+        </Routes>
+        <Routes>
+          <Route path="/" element={<Chatbot />} />
+        </Routes>
       </div>
     </Router>
   );

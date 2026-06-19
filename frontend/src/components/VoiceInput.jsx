@@ -44,7 +44,9 @@ export default function VoiceInput({ onTranscript, onListeningChange }) {
     };
 
     recognition.onerror = (err) => {
-      console.error('Speech recognition error:', err);
+      if (err.error !== 'no-speech' && err.error !== 'aborted') {
+        console.error('Speech recognition error:', err);
+      }
       setListening(false);
       onListeningChange?.(false);
     };

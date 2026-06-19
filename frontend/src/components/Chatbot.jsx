@@ -15,7 +15,7 @@ const speak = (text) => {
   // Pick a natural voice if available
   const voices = window.speechSynthesis.getVoices();
   const preferred = voices.find(
-    (v) => v.lang === 'en-US' && (v.name.includes('Google') || v.name.includes('Samantha'))
+    (v) => v.lang === 'en-US' && ( v.name.includes('Samantha') || v.name.includes('Daniel'))
   );
   if (preferred) utterance.voice = preferred;
   window.speechSynthesis.speak(utterance);

@@ -53,3 +53,8 @@ def add_message(
             }
         }
     )
+
+
+def get_all_sessions():
+    """Returns all chat sessions sorted by updatedAt descending."""
+    return list(chat_sessions.find({}).sort("updatedAt", -1))

@@ -3,6 +3,12 @@ const express = require('express');
 const cors = require('cors');
 const { Resend } = require('resend');
 const axios = require('axios');
+const crypto = require('crypto');
+
+// In-memory store for simple OTP auth
+const otpStore = new Map(); // email -> { otp, expires }
+const sessionStore = new Set(); // valid tokens
+const ADMIN_EMAIL = 'sumukeshmopuram1@gmail.com';
 
 const CHATBOT_API =
   process.env.CHATBOT_API_URL ||
@@ -122,6 +128,78 @@ app.get('/api/wake', async (req, res) => {
   } catch (err) {
     // Still respond OK – the ping was sent; AI may just be starting up
     res.json({ status: 'waking' });
+  }
+});
+
+/* ─── Admin Dashboard Routes ─── */
+
+app.post('/api/admin/request-otp', async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (email !== ADMIN_EMAIL) {
+      // Fake success to prevent enumeration
+      return res.json({ success: true });
+    }
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    otpStore.set(email, {
+      otp,
+      expires: Date.now() + 10 * 60 * 1000 // 10 minutes
+    });
+
+    const { error } = await resend.emails.send({
+      from: 'portfolio <onboarding@sumukesh.app>',
+      to: [ADMIN_EMAIL],
+      subject: `Admin Login OTP - Portfolio`,
+      html: `<div style="font-family: sans-serif; padding: 20px;">
+              <h2>Admin Login</h2>
+              <p>Your one-time password is: <strong style="font-size: 24px;">${otp}</strong></p>
+              <p>It expires in 10 minutes.</p>
+             </div>`
+    });
+
+    if (error) {
+      console.error('Failed to send OTP:', error);
+      return res.status(500).json({ error: 'Failed to send OTP' });
+    }
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error('OTP request error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.post('/api/admin/verify-otp', (req, res) => {
+  const { email, otp } = req.body;
+  const record = otpStore.get(email);
+  if (!record || record.otp !== otp || record.expires < Date.now()) {
+    return res.status(401).json({ error: 'Invalid or expired OTP' });
+  }
+  
+  otpStore.delete(email);
+
+  const token = crypto.randomBytes(32).toString('hex');
+  sessionStore.add(token);
+
+  res.json({ token });
+});
+
+app.get('/api/admin/sessions', async (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  const token = authHeader.split(' ')[1];
+  if (!sessionStore.has(token)) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    const { data } = await axios.get(`${CHATBOT_API}/api/admin/sessions`);
+    res.json(data);
+  } catch (err) {
+    console.error('Admin sessions proxy error:', err.message);
+    res.status(502).json({ error: 'AI service unavailable' });
   }
 });
 

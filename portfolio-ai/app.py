@@ -12,7 +12,8 @@ from db.chat_repository import (
     create_session,
     get_session,
     get_history,
-    add_message
+    add_message,
+    get_all_sessions
 )
 
 from models import ChatRequest
@@ -120,6 +121,13 @@ def chat_history(
         "messages": get_history(
             session_id
         )
+    }
+
+@app.get("/api/admin/sessions")
+def admin_sessions():
+    sessions = get_all_sessions()
+    return {
+        "sessions": sessions
     }
     
 def _keepalive():
