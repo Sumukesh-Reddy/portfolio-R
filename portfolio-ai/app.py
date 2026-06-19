@@ -15,6 +15,7 @@ from db.chat_repository import (
 )
 
 from models import ChatRequest
+import time
 
 from rag.chain import (
     get_answer
@@ -119,3 +120,11 @@ def chat_history(
             session_id
         )
     }
+    
+def alive():
+    i = 0
+    while True:
+        print("Server is alive")
+        time.sleep(300)  # Sleep for 5 minutes (300 seconds)
+        
+alive()
