@@ -116,7 +116,6 @@ export default function Chatbot() {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
-  const [autoSpeak, setAutoSpeak] = useState(false);
   const [sessionId, setSessionId] = useState(null);
   const [error, setError] = useState(null);
   const [hasOpened, setHasOpened] = useState(false);
@@ -213,7 +212,7 @@ export default function Chatbot() {
     } finally {
       setIsLoading(false);
     }
-  }, [isLoading, sessionId, autoSpeak]);
+  }, [isLoading, sessionId]);
 
   /* ── Handle textarea key (Enter to send, Shift+Enter for newline) ── */
   const handleKeyDown = (e) => {
@@ -252,11 +251,7 @@ export default function Chatbot() {
     }
   };
 
-  /* ── Toggle global auto-speak ── */
-  const toggleAutoSpeak = () => {
-    if (autoSpeak) stopSpeaking();
-    setAutoSpeak((v) => !v);
-  };
+
 
   /* ─────────────────────────────── */
   return (
