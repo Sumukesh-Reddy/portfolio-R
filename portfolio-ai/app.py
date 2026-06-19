@@ -1,4 +1,5 @@
 from uuid import uuid4
+import threading
 
 from fastapi import (
     FastAPI,
@@ -121,10 +122,11 @@ def chat_history(
         )
     }
     
-def alive():
-    i = 0
+def _keepalive():
     while True:
         print("Server is alive")
-        time.sleep(300)  # Sleep for 5 minutes (300 seconds)
-        
-alive()
+        time.sleep(300)
+
+# Run keepalive in a background daemon thread so it doesn't block FastAPI startup
+_t = threading.Thread(target=_keepalive, daemon=True)
+_t.start()
