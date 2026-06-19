@@ -4,9 +4,11 @@ const cors = require('cors');
 const { Resend } = require('resend');
 const axios = require('axios');
 
-// Python FastAPI chatbot backend URL
 const CHATBOT_API =
-  process.env.CHATBOT_API_URL || 'http://localhost:8000';
+  process.env.CHATBOT_API_URL ||
+  (process.env.NODE_ENV === 'production'
+    ? 'https://portfolio-r-vscy.onrender.com'
+    : 'http://localhost:8000');
 
 const app = express();
 const port = process.env.PORT || 3001;
