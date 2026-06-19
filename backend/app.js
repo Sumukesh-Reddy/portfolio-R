@@ -2,6 +2,11 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { Resend } = require('resend');
+const axios = require('axios');
+
+// Python FastAPI chatbot backend URL
+const CHATBOT_API =
+  process.env.CHATBOT_API_URL || 'http://localhost:8000';
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -107,6 +112,54 @@ app.post('/api/contact', async (req, res) => {
   }
 });
 
+/* ─── Chatbot proxy routes ─── */
+
+// Create a new chat session
+app.post('/api/chat/session', async (req, res) => {
+  try {
+    const { data } = await axios.post(`${CHATBOT_API}/api/chat/session`);
+    res.json(data);
+  } catch (err) {
+    console.error('Chatbot session error:', err.message);
+    res.status(502).json({ error: 'AI service unavailable' });
+  }
+});
+
+// Send a chat message
+app.post('/api/chat/message', async (req, res) => {
+  try {
+    const { data } = await axios.post(
+      `${CHATBOT_API}/api/chat/message`,
+      req.body,
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+    res.json(data);
+  } catch (err) {
+    console.error('Chatbot message error:', err.message);
+    if (err.response?.status === 404) {
+      return res.status(404).json({ error: 'Session not found' });
+    }
+    res.status(502).json({ error: 'AI service unavailable' });
+  }
+});
+
+// Fetch chat history
+app.get('/api/chat/history/:sessionId', async (req, res) => {
+  try {
+    const { data } = await axios.get(
+      `${CHATBOT_API}/api/chat/history/${req.params.sessionId}`
+    );
+    res.json(data);
+  } catch (err) {
+    console.error('Chatbot history error:', err.message);
+    if (err.response?.status === 404) {
+      return res.status(404).json({ error: 'Session not found' });
+    }
+    res.status(502).json({ error: 'AI service unavailable' });
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
+  console.log(`Chatbot AI backend: ${CHATBOT_API}`);
 });

@@ -10,7 +10,9 @@ import Footer from './components/Footer';
 import Certificates from './components/Certificates';
 import Achievements from './components/Achievments';
 import './styles/main.css';
+import './styles/chatbot.css';
 import CodingProfiles from './components/CodingProfiles';
+import Chatbot from './components/Chatbot';
 
 function App() {
   const [stars, setStars] = useState([]);
@@ -148,6 +150,7 @@ function App() {
           </Routes>
         </main>
         <Footer />
+        <Chatbot />
       </div>
     </Router>
   );
