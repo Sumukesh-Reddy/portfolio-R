@@ -18,10 +18,7 @@ const Header = () => {
         const handleScroll = () => setScrolled(window.scrollY > 40);
         window.addEventListener('scroll', handleScroll, { passive: true });
 
-        // FIX: "slides through all sections when switching tabs"
-        // The browser restores scroll position with smooth behavior when
-        // returning to a tab. We disable smooth scrolling globally and
-        // only enable it for intentional anchor clicks.
+        
         document.documentElement.style.scrollBehavior = 'auto';
 
         const handleVisibilityChange = () => {
@@ -85,16 +82,6 @@ const Header = () => {
                     <button id="themeToggle" onClick={toggleTheme} aria-label="Toggle theme">
                         <i className={`fas ${darkMode ? 'fa-sun' : 'fa-moon'}`}></i>
                     </button>
-                </div>
-                <div
-                    className="hamburger"
-                    id="hamburger"
-                    onClick={() => setIsMenuOpen(!isMenuOpen)}
-                    aria-label="Toggle menu"
-                >
-                    <div></div>
-                    <div></div>
-                    <div></div>
                 </div>
             </div>
         </header>

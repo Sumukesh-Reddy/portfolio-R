@@ -50,7 +50,7 @@ app.post('/api/contact', async (req, res) => {
     }
 
     const { data, error } = await resend.emails.send({
-      from: 'Portfolio Contact <onboarding@resend.dev>',
+      from: 'portfolio <onboarding@sumukesh.app>',
       to: ['sumukeshmopuram1@gmail.com'],
       replyTo: email,
       subject: `New Message from ${name} - Portfolio`,
