@@ -112,6 +112,17 @@ app.post('/api/contact', async (req, res) => {
   }
 });
 
+/* ─── Wake-up ping (warms Render free-tier cold start) ─── */
+app.get('/api/wake', async (req, res) => {
+  try {
+    await axios.get(`${CHATBOT_API}/`, { timeout: 10000 });
+    res.json({ status: 'awake' });
+  } catch (err) {
+    // Still respond OK – the ping was sent; AI may just be starting up
+    res.json({ status: 'waking' });
+  }
+});
+
 /* ─── Chatbot proxy routes ─── */
 
 // Create a new chat session

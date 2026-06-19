@@ -49,3 +49,11 @@ export const getChatHistory = async (sessionId) => {
   const response = await api.get(`/api/chat/history/${sessionId}`);
   return response.data; // { messages }
 };
+
+/**
+ * Silently ping the backend (and AI service) to warm up Render cold starts.
+ * Fire-and-forget — never throws.
+ */
+export const wakeBackend = () => {
+  api.get('/api/wake', { timeout: 15000 }).catch(() => {});
+};

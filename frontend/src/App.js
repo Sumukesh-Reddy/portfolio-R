@@ -13,10 +13,14 @@ import './styles/main.css';
 import './styles/chatbot.css';
 import CodingProfiles from './components/CodingProfiles';
 import Chatbot from './components/Chatbot';
+import { wakeBackend } from './services/api';
 
 function App() {
   const [stars, setStars] = useState([]);
   const [shootingStars, setShootingStars] = useState([]);
+
+  // Warm up the AI backend on Render (free tier cold starts)
+  useEffect(() => { wakeBackend(); }, []);
 
   // Create stars for dark mode
   useEffect(() => {
@@ -61,7 +65,6 @@ function App() {
             angle: (angle * 180) / Math.PI
           });
         }
-        
 
         setStars(newStars);
         setShootingStars(newShootingStars);
