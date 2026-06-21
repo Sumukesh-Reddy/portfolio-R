@@ -130,17 +130,9 @@ def admin_sessions():
         "sessions": sessions
     }
     
-def _keepalive():
-    import urllib.request
-    url = "https://portfolio-r-gzgf.onrender.com/"
-    while True:
-        time.sleep(300)
-        try:
-            urllib.request.urlopen(url)
-            print("Keepalive ping successful")
-        except Exception as e:
-            print(f"Keepalive ping failed: {e}")
-
-# Run keepalive in a background daemon thread so it doesn't block FastAPI startup
-_t = threading.Thread(target=_keepalive, daemon=True)
-_t.start()
+@app.get("/api/wakeup")
+def wakeup():
+    print("Wakeup call received")
+    return {
+        "message": "Wakeup call received"
+    }

@@ -250,6 +250,16 @@ app.get('/api/chat/history/:sessionId', async (req, res) => {
   }
 });
 
+const alive = setInterval(async () => {
+  try {
+    await axios.get(`https://portfolio-r-vscy.onrender.com/api/wakeup`, { timeout: 10000 });
+    console.log('Pinged AI service to keep it awake');
+  } catch (err) {
+    console.error('Failed to ping AI service:', err.message);
+  }
+}
+, 5 * 60 * 1000); // every 15 minutes
+
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
   console.log(`Chatbot AI backend: ${CHATBOT_API}`);
