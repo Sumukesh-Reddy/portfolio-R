@@ -3,7 +3,7 @@ import axios from 'axios';
 const API_BASE =
   process.env.NODE_ENV === 'development'
     ? 'http://localhost:3001'
-    : 'https://portfolio-r-gzgf.onrender.com';
+    : process.env.backend_url || 'https://portfolio-r-gzgf.onrender.com';
 
 const api = axios.create({
   baseURL: API_BASE,
