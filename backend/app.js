@@ -252,13 +252,17 @@ app.get('/api/chat/history/:sessionId', async (req, res) => {
 
 const alive = setInterval(async () => {
   try {
+    // Ping Python AI service
     await axios.get(`https://portfolio-r-vscy.onrender.com/api/wakeup`, { timeout: 10000 });
     console.log('Pinged AI service to keep it awake');
+
+    // Ping Node backend itself
+    await axios.get(`https://portfolio-r-gzgf.onrender.com/api/wake`, { timeout: 10000 });
+    console.log('Pinged Node backend to keep it awake');
   } catch (err) {
-    console.error('Failed to ping AI service:', err.message);
+    console.error('Failed to ping services:', err.message);
   }
-}
-, 5 * 60 * 1000); // every 15 minutes
+}, 5 * 60 * 1000); // every 5 minutes
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
