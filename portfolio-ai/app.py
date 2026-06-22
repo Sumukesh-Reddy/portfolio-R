@@ -136,3 +136,13 @@ def wakeup():
     return {
         "message": "Wakeup call received"
     }
+    
+def keep_alive():
+    import time
+    counter = 1
+    while True:
+        logger.info(f"Keep-alive ping {counter}")
+        counter += 1
+        time.sleep(300)  # Sleep for 5 minutes
+
+keep_alive()
