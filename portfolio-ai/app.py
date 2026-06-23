@@ -137,12 +137,38 @@ def wakeup():
         "message": "Wakeup call received"
     }
     
-def keep_alive():
-    import time
-    counter = 1
-    while True:
-        logger.info(f"Keep-alive ping {counter}")
-        counter += 1
-        time.sleep(300)  # Sleep for 5 minutes
+import logging
+import urllib.request
 
-keep_alive()
+logger = logging.getLogger("ai_service")
+logging.basicConfig(level=logging.INFO)
+
+def start_keep_alive_thread():
+    import time
+    
+    def keep_alive_loop():
+        # Wait a few seconds for Uvicorn server startup to complete
+        time.sleep(10)
+        num = 1
+        
+        while True:
+            # 1. Log count (cycling 1 to 5)
+            logger.info(f"[Keep-Alive] Log count: {num}")
+            num = num + 1 if num < 5 else 1
+            
+            # 2. Ping Self to keep alive on Render
+            self_url = "https://portfolio-r-vscy.onrender.com/api/wakeup"
+            try:
+                req = urllib.request.Request(self_url, headers={'User-Agent': 'OrbitAI-KeepAlive'})
+                with urllib.request.urlopen(req, timeout=10) as response:
+                    status_code = response.getcode()
+                    logger.info(f"[Keep-Alive] Pinged self, status: {status_code}")
+            except Exception as e:
+                logger.error(f"[Keep-Alive] Failed to self-ping: {e}")
+                
+            time.sleep(300)  # Every 5 minutes
+
+    # Start loop as a background daemon thread so it doesn't block startup
+    threading.Thread(target=keep_alive_loop, daemon=True).start()
+
+start_keep_alive_thread()
