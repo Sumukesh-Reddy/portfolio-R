@@ -24,6 +24,14 @@ const projectsData = [
   },
   {
     "id": 3,
+    "title": "ORBIT AI – Enterprise Knowledge Assistant",
+    "appName": "ORBIT AI",
+    "description": "An AI-powered enterprise knowledge assistant that enables conversational, source-grounded search across custom documents using RAG. It processes PDFs, DOCX, TXT, and web content, delivering accurate answers with citations, semantic retrieval, document indexing, and real-time chat powered by Gemini and LangChain.",
+    "link": "https://orbit-ai-kohl.vercel.app",
+    "tags": ["FastAPI", "LangChain", "RAG", "Gemini API", "MongoDB", "Redis", "BullMQ"]
+  },
+  {
+    "id": 4,
     "title": "Plum OPD Claim Adjudication Tool",
     "appName": "Plum AI",
     "description": "An AI-powered full-stack application for automating Outpatient Department (OPD) insurance claim adjudication. It extracts structured data from medical documents using Gemini and OCR, evaluating claims against configurable policy terms to return an approval, rejection, or manual review decision.",
@@ -31,7 +39,7 @@ const projectsData = [
     "tags": ["React", "Node.js", "MongoDB", "Tailwind CSS", "Gemini API", "OCR"]
   },
   {
-    id: 4,
+    id: 5,
     title: "Sorting Algorithm Visualizer",
     appName: "Sort With Visualization",
     description: "An animated visualizer demonstrating sorting algorithms like Bubble Sort. Uses DOM manipulation and timed delays to visually show each step of the sorting process with responsive colored bars.",
@@ -39,7 +47,7 @@ const projectsData = [
     tags: ["HTML5", "CSS3", "JavaScript", "Algorithms"]
   },
   {
-    id: 5,
+    id: 6,
     title: "Task Management Application",
     appName: "TODO APP",
     description: "A sleek and user-friendly TODO application supporting CRUD operations, status filters, task categorizations, and integrated Google Authentication for secure session management.",
@@ -47,7 +55,7 @@ const projectsData = [
     tags: ["React", "Firebase", "Google Auth", "CSS3"]
   },
   {
-    id: 6,
+    id: 7,
     title: "Weather Forecast Application",
     appName: "Weather",
     description: "A weather forecast website providing current weather conditions for any city. Features dynamic background transitions based on weather states and displays temperature, humidity, and wind speed.",
