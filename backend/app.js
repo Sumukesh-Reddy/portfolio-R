@@ -13,7 +13,7 @@ const ADMIN_EMAIL = 'sumukeshmopuram1@gmail.com';
 const CHATBOT_API =
   process.env.CHATBOT_API_URL ||
   (process.env.NODE_ENV === 'production'
-    ? 'https://portfolio-r-vscy.onrender.com'
+    ? 'https://portfolio-r-jb5s.onrender.com'
     : 'http://localhost:8000');
 
 const app = express();
