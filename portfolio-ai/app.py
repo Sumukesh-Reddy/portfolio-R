@@ -33,7 +33,7 @@ app.add_middleware(
         "https://sumukesh-portfolio.vercel.app",
         "https://www.sumukesh.app",
         "https://sumukesh.app",
-        "https://portfolio-r-gzgf.onrender.com",
+        "https://portfolio-r-jb5s.onrender.com",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -157,7 +157,7 @@ def start_keep_alive_thread():
             num = num + 1 if num < 5 else 1
             
             # 2. Ping Self to keep alive on Render
-            self_url = "https://portfolio-r-vscy.onrender.com/api/wakeup"
+            self_url = "https://portfolio-r-jb5s.onrender.com/api/wakeup"
             try:
                 req = urllib.request.Request(self_url, headers={'User-Agent': 'OrbitAI-KeepAlive'})
                 with urllib.request.urlopen(req, timeout=10) as response:

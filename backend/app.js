@@ -253,7 +253,7 @@ app.get('/api/chat/history/:sessionId', async (req, res) => {
 const alive = setInterval(async () => {
   try {
     // Ping Python AI service
-    await axios.get(`https://portfolio-r-vscy.onrender.com/api/wakeup`, { timeout: 10000 });
+    await axios.get(`https://portfolio-r-jb5s.onrender.com/api/wakeup`, { timeout: 10000 });
     console.log('Pinged AI service to keep it awake');
 
     // Ping Node backend itself
