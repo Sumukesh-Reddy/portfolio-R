@@ -13,7 +13,7 @@ const ADMIN_EMAIL = 'sumukeshmopuram1@gmail.com';
 const CHATBOT_API =
   process.env.CHATBOT_API_URL ||
   (process.env.NODE_ENV === 'production'
-    ? 'https://portfolio-r-jb5s.onrender.com'
+    ? (() => { throw new Error('CHATBOT_API_URL env variable is not set'); })()
     : 'http://localhost:8000');
 
 const app = express();
@@ -250,15 +250,19 @@ app.get('/api/chat/history/:sessionId', async (req, res) => {
   }
 });
 
+const NODE_BACKEND_URL = process.env.NODE_BACKEND_URL;
+
 const alive = setInterval(async () => {
   try {
     // Ping Python AI service
-    await axios.get(`https://portfolio-r-jb5s.onrender.com/api/wakeup`, { timeout: 10000 });
+    await axios.get(`${CHATBOT_API}/api/wakeup`, { timeout: 10000 });
     console.log('Pinged AI service to keep it awake');
 
     // Ping Node backend itself
-    await axios.get(`https://portfolio-r-gzgf.onrender.com/api/wake`, { timeout: 10000 });
-    console.log('Pinged Node backend to keep it awake');
+    if (NODE_BACKEND_URL) {
+      await axios.get(`${NODE_BACKEND_URL}/api/wake`, { timeout: 10000 });
+      console.log('Pinged Node backend to keep it awake');
+    }
   } catch (err) {
     console.error('Failed to ping services:', err.message);
   }
