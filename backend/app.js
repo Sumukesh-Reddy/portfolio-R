@@ -257,7 +257,7 @@ const alive = setInterval(async () => {
     console.log('Pinged AI service to keep it awake');
 
     // Ping Node backend itself
-    await axios.get(`https://portfolio-r-gzgf.onrender.com/api/wake`, { timeout: 10000 });
+    await axios.get(`https://portfolio-r-vscy.onrender.com/api/wake`, { timeout: 10000 });
     console.log('Pinged Node backend to keep it awake');
   } catch (err) {
     console.error('Failed to ping services:', err.message);

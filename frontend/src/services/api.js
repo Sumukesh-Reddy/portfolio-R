@@ -3,7 +3,7 @@ import axios from 'axios';
 const API_BASE =
   process.env.NODE_ENV === 'development'
     ? 'http://localhost:3001'
-    : process.env.backend_url || 'https://portfolio-r-2.onrender.com';
+    : process.env.REACT_APP_BACKEND_URL || 'https://portfolio-r-vscy.onrender.com';
 
 const api = axios.create({
   baseURL: API_BASE,
