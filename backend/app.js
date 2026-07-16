@@ -13,7 +13,7 @@ const ADMIN_EMAIL = 'sumukeshmopuram1@gmail.com';
 const CHATBOT_API =
   process.env.CHATBOT_API_URL ||
   (process.env.NODE_ENV === 'production'
-    ? 'https://portfolio-r-1.onrender.com'
+    ? 'https://portfolio-r-vscy.onrender.com'
     : 'http://localhost:8000');
 
 const app = express();
@@ -253,11 +253,11 @@ app.get('/api/chat/history/:sessionId', async (req, res) => {
 const alive = setInterval(async () => {
   try {
     // Ping Python AI service
-    await axios.get(`https://portfolio-r-1.onrender.com/api/wakeup`, { timeout: 10000 });
+    await axios.get(`https://portfolio-r-vscy.onrender.com/api/wakeup`, { timeout: 10000 });
     console.log('Pinged AI service to keep it awake');
 
     // Ping Node backend itself
-    await axios.get(`https://portfolio-r-vscy.onrender.com/api/wake`, { timeout: 10000 });
+    await axios.get(`https://portfolio-r-1.onrender.com/api/wake`, { timeout: 10000 });
     console.log('Pinged Node backend to keep it awake');
   } catch (err) {
     console.error('Failed to ping services:', err.message);
