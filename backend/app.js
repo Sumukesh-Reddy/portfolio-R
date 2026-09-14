@@ -205,10 +205,91 @@ app.get('/api/admin/sessions', async (req, res) => {
 
 /* ─── Chatbot proxy routes ─── */
 
-// Fallback knowledge base answering questions about Sumukesh
+// High-speed in-memory cache for queries
+const responseCache = new Map(); // normalizedQuery -> answer
+const MAX_CACHE_SIZE = 100;
+
+const getCachedAnswer = (query) => {
+  const key = (query || '').trim().toLowerCase();
+  return responseCache.get(key);
+};
+
+const setCachedAnswer = (query, answer) => {
+  const key = (query || '').trim().toLowerCase();
+  if (responseCache.size >= MAX_CACHE_SIZE) {
+    const firstKey = responseCache.keys().next().value;
+    responseCache.delete(firstKey);
+  }
+  responseCache.set(key, answer);
+};
+
+// Check for instant fast-path matches (returns in <5ms without waiting for upstream network)
+const getFastPathAnswer = (message) => {
+  const q = (message || '').trim().toLowerCase();
+
+  // Instant response for Education chip / questions
+  if (q === "tell me about sumukesh's education" || q === "education" || q.includes("where did he study") || q.includes("degree")) {
+    return "Sumukesh is currently pursuing his **B.Tech in Computer Science and Engineering (CSE)** at **IIIT Sri City** (2023–2027).\n\n" +
+      "• **Degree**: B.Tech in CSE, IIIT Sri City (2023–2027)\n" +
+      "• **Intermediate (MPC)**: Sri Chaitanya Junior College (2023)\n" +
+      "• **Core Focus**: Data Structures & Algorithms, Full-Stack Web Development, and Applied AI.";
+  }
+
+  // Instant response for Projects chip / questions
+  if (q === "what projects has sumukesh built?" || q === "projects" || q.includes("what projects") || q.includes("show me his projects")) {
+    return "Here are some of the key projects Sumukesh has built:\n\n" +
+      "1. **ORBIT AI – Enterprise Knowledge Assistant**\n" +
+      "   • Conversational RAG assistant using LangChain, FastAPI, and Gemini API for document search with source citations.\n\n" +
+      "2. **Plum OPD Claim Adjudication Tool**\n" +
+      "   • Automated insurance claim adjudication system utilizing Gemini API & OCR for medical document processing.\n\n" +
+      "3. **ShelterSeek**\n" +
+      "   • Full-stack hotel booking platform with real-time room tracking and role-based host/admin dashboards (Node.js, Express, MongoDB).\n\n" +
+      "4. **VachoLink**\n" +
+      "   • Modern real-time chat application with live status indicators and socket connections (React, Socket.io).\n\n" +
+      "5. **Sorting Algorithm Visualizer** & **Task Management TODO App**.";
+  }
+
+  // Instant response for Skills chip / questions
+  if (q === "what are sumukesh's technical skills?" || q === "skills" || q.includes("what skills") || q.includes("tech stack")) {
+    return "Sumukesh's technical skillset includes:\n\n" +
+      "• **Languages**: Core Java (90%), C (85%), Python (75%), JavaScript (80%), SQL (70%)\n" +
+      "• **Web Development**: React, Node.js, Express, HTML5/CSS3, Socket.IO, SpringBoot\n" +
+      "• **Databases**: MongoDB, MySQL\n" +
+      "• **AI & ML**: Machine Learning, NLP, Neural Networks, LangChain, Gemini API\n" +
+      "• **Tools**: Git, Docker, Render, VS Code, TensorFlow, Pandas/NumPy";
+  }
+
+  // Instant response for Contact chip / questions
+  if (q === "how can i contact sumukesh?" || q === "contact" || q.includes("contact sumukesh") || q.includes("email him")) {
+    return "You can get in touch with Sumukesh directly:\n\n" +
+      "• **Email**: [sumukeshreddy.m23@iiits.in](mailto:sumukeshreddy.m23@iiits.in) or [sumukeshmopuram1@gmail.com](mailto:sumukeshmopuram1@gmail.com)\n" +
+      "• **Phone**: +91-8790787664\n" +
+      "• **LinkedIn & GitHub**: Links available in the header and footer\n" +
+      "• You can also use the **Contact Form** right below on this page to send a direct message!";
+  }
+
+  // Instant response for Achievements chip / questions
+  if (q === "what are sumukesh's key achievements?" || q === "achievements" || q.includes("key achievements")) {
+    return "Sumukesh's key achievements and activities:\n\n" +
+      "• Active problem solver and competitor on **LeetCode** and **Codeforces**.\n" +
+      "• Coursera professional certifications in Full-Stack Web Development, Java, and Machine Learning.\n" +
+      "• Developed production-grade AI applications like ORBIT AI and full-stack platforms like ShelterSeek.";
+  }
+
+  // Instant response for Greetings
+  if (q === "hi" || q === "hello" || q === "hey" || q === "who are you") {
+    return "Hello! I am **Sumukesh's AI Assistant**. Ask me anything about his **projects**, **technical skills**, **education**, or **contact details**!";
+  }
+
+  return null;
+};
+
+// Fallback knowledge base answering other questions about Sumukesh
 const getFallbackAnswer = (message) => {
+  const fast = getFastPathAnswer(message);
+  if (fast) return fast;
+
   const q = (message || '').toLowerCase();
-  
   if (q.includes('education') || q.includes('college') || q.includes('degree') || q.includes('study') || q.includes('school') || q.includes('iiit')) {
     return "Sumukesh is pursuing his **B.Tech in Computer Science and Engineering (CSE)** at **IIIT Sri City** (2023–2027).\n\n" +
       "• **Degree**: B.Tech in CSE, IIIT Sri City (2023–2027)\n" +
@@ -217,44 +298,23 @@ const getFallbackAnswer = (message) => {
   }
   
   if (q.includes('project') || q.includes('built') || q.includes('work') || q.includes('app') || q.includes('portfolio')) {
-    return "Here are some of the key projects Sumukesh has built:\n\n" +
-      "1. **ORBIT AI – Enterprise Knowledge Assistant**: RAG-powered document assistant built with LangChain, FastAPI, and Gemini API for source-grounded search across PDFs and documents.\n" +
-      "2. **Plum OPD AI**: Automated insurance claim adjudication system extracting medical document data with Gemini and OCR.\n" +
-      "3. **ShelterSeek**: Full-stack hotel booking platform with real-time room tracking, role-based auth, and host/admin dashboards (Node.js, Express, MongoDB).\n" +
-      "4. **VachoLink**: Modern real-time chat application featuring live online presence indicators (React, Node.js, Socket.io, TailwindCSS).\n" +
-      "5. **Sorting Algorithm Visualizer**: Interactive web visualizer showing sorting algorithms like Bubble Sort in real-time.\n" +
-      "6. **Task Management (TODO App)**: Clean task manager with Google Authentication and CRUD operations.";
+    return "Here are key projects built by Sumukesh:\n" +
+      "• **ORBIT AI**: RAG enterprise knowledge assistant (FastAPI, LangChain, Gemini)\n" +
+      "• **Plum OPD AI**: Automated claims adjudication with Gemini & OCR\n" +
+      "• **ShelterSeek**: Full-stack hotel booking platform (Node.js, Express, MongoDB)\n" +
+      "• **VachoLink**: Real-time chat application with live status (React, Socket.io)";
   }
   
   if (q.includes('skill') || q.includes('tech') || q.includes('stack') || q.includes('language') || q.includes('tool')) {
-    return "Sumukesh's technical skillset covers:\n\n" +
-      "• **Languages**: Core Java (90%), C (85%), Python (75%), JavaScript (80%), SQL (70%)\n" +
-      "• **Web Development**: React, Node.js, Express, HTML5/CSS3, Socket.IO, SpringBoot\n" +
+    return "Sumukesh's core skillset:\n" +
+      "• **Languages**: Core Java, Python, C, JavaScript, SQL\n" +
+      "• **Web**: React, Node.js, Express, HTML5/CSS3, Socket.IO\n" +
       "• **Databases**: MongoDB, MySQL\n" +
-      "• **AI & ML**: Machine Learning, NLP, Neural Networks, LangChain, Gemini API\n" +
-      "• **Tools**: Git, Docker, Render, VS Code, TensorFlow, Pandas/NumPy";
+      "• **AI & ML**: LangChain, Gemini API, NLP, Machine Learning";
   }
   
   if (q.includes('contact') || q.includes('email') || q.includes('phone') || q.includes('reach') || q.includes('hire') || q.includes('message')) {
-    return "You can get in touch with Sumukesh directly:\n\n" +
-      "• **Email**: [sumukeshreddy.m23@iiits.in](mailto:sumukeshreddy.m23@iiits.in) or [sumukeshmopuram1@gmail.com](mailto:sumukeshmopuram1@gmail.com)\n" +
-      "• **Phone**: +91-8790787664\n" +
-      "• You can also use the **Contact Form** right below on this website to send a direct message!";
-  }
-  
-  if (q.includes('achievement') || q.includes('award') || q.includes('certificate') || q.includes('contest') || q.includes('codeforces') || q.includes('leetcode')) {
-    return "Sumukesh's key achievements and activities:\n\n" +
-      "• Active problem solver on **LeetCode** and **Codeforces**.\n" +
-      "• Coursera certifications in Full-Stack Web Development, Java, and Machine Learning.\n" +
-      "• Built real-world production projects including ORBIT AI and ShelterSeek.";
-  }
-
-  if (q.includes('hi') || q.includes('hello') || q.includes('hey') || q.includes('who are you') || q.includes('help')) {
-    return "Hello! I am **Sumukesh's AI Assistant**. Ask me anything about his:\n\n" +
-      "• 🎓 **Education** at IIIT Sri City\n" +
-      "• 💼 **Projects** (ORBIT AI, ShelterSeek, VachoLink, Plum AI)\n" +
-      "• 🛠️ **Technical Skills** (Java, Python, React, Node.js, AI)\n" +
-      "• 📫 **Contact details** and how to reach him";
+    return "Contact Sumukesh at **sumukeshreddy.m23@iiits.in** or **sumukeshmopuram1@gmail.com**, phone: **+91-8790787664**, or use the Contact Form below.";
   }
 
   return "I'm Sumukesh's AI assistant! Sumukesh is a CSE student at IIIT Sri City skilled in Full Stack Web Development (React, Node.js, MongoDB) and AI (Gemini, LangChain). Feel free to ask about his **projects**, **skills**, **education**, or **contact info**!";
@@ -263,7 +323,7 @@ const getFallbackAnswer = (message) => {
 // Create a new chat session - NEVER fails, ensures chatbot always opens!
 app.post('/api/chat/session', async (req, res) => {
   try {
-    const { data } = await axios.post(`${CHATBOT_API}/api/chat/session`, {}, { timeout: 8000 });
+    const { data } = await axios.post(`${CHATBOT_API}/api/chat/session`, {}, { timeout: 4000 });
     if (data && data.sessionId) {
       return res.json(data);
     }
@@ -276,25 +336,40 @@ app.post('/api/chat/session', async (req, res) => {
   res.json({ sessionId: localSessionId, isFallback: true });
 });
 
-// Send a chat message
+// Send a chat message with fast-path & in-memory cache
 app.post('/api/chat/message', async (req, res) => {
   const { sessionId, message } = req.body;
 
+  // 1. Check instant fast-path (<5ms)
+  const fastAnswer = getFastPathAnswer(message);
+  if (fastAnswer) {
+    return res.json({ answer: fastAnswer, isFastPath: true });
+  }
+
+  // 2. Check in-memory cache (<5ms)
+  const cached = getCachedAnswer(message);
+  if (cached) {
+    return res.json({ answer: cached, isCached: true });
+  }
+
+  // 3. Query upstream AI service with a tight 8s timeout to avoid slow hangs
   try {
     const { data } = await axios.post(
       `${CHATBOT_API}/api/chat/message`,
       req.body,
-      { headers: { 'Content-Type': 'application/json' }, timeout: 25000 }
+      { headers: { 'Content-Type': 'application/json' }, timeout: 8000 }
     );
     if (data && data.answer) {
+      setCachedAnswer(message, data.answer);
       return res.json(data);
     }
   } catch (err) {
-    console.warn(`Upstream AI message failed [HTTP ${err.response?.status || err.message}]. Using portfolio knowledge fallback.`);
+    console.warn(`Upstream AI message failed [HTTP ${err.response?.status || err.message}]. Using instant portfolio fallback.`);
   }
 
-  // Fallback response: if AI is rate-limited (429) or cold-starting (502), provide direct answer!
+  // 4. Return intelligent fallback if upstream AI is slow or rate-limited
   const answer = getFallbackAnswer(message);
+  setCachedAnswer(message, answer);
   res.json({ answer, isFallback: true });
 });
 

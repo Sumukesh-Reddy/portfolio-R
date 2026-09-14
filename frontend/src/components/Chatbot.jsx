@@ -165,10 +165,10 @@ export default function Chatbot() {
   }, []);
 
   useEffect(() => {
-    if (!isOpen || sessionInitRef.current) return;
+    if (sessionInitRef.current) return;
     sessionInitRef.current = true;
     initSession();
-  }, [isOpen, initSession]);
+  }, [initSession]);
 
   /* ── Focus input when chat opens ── */
   useEffect(() => {
@@ -218,13 +218,28 @@ export default function Chatbot() {
 
     try {
       const data = await sendChatMessage(activeSessionId, trimmed);
-      const botMsg = {
-        id: Date.now() + 1,
-        role: 'bot',
-        content: data.answer,
-        time: new Date(),
-      };
-      setMessages((prev) => [...prev, botMsg]);
+      const botMsgId = Date.now() + 1;
+      const fullAnswer = data.answer || '';
+      
+      // Stream words progressively for ultra-fast perceived response
+      const words = fullAnswer.split(' ');
+      if (words.length <= 4) {
+        setMessages((prev) => [...prev, { id: botMsgId, role: 'bot', content: fullAnswer, time: new Date() }]);
+      } else {
+        let currentIdx = 1;
+        setMessages((prev) => [...prev, { id: botMsgId, role: 'bot', content: words[0], time: new Date() }]);
+        const streamTimer = setInterval(() => {
+          if (currentIdx < words.length) {
+            const nextSlice = words.slice(0, currentIdx + 1).join(' ');
+            setMessages((prev) =>
+              prev.map((m) => (m.id === botMsgId ? { ...m, content: nextSlice } : m))
+            );
+            currentIdx++;
+          } else {
+            clearInterval(streamTimer);
+          }
+        }, 15);
+      }
 
     } catch (err) {
       console.error('Chat error:', err);
