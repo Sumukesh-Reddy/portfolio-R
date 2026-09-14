@@ -205,14 +205,38 @@ app.get('/api/admin/sessions', async (req, res) => {
 
 /* ─── Chatbot proxy routes ─── */
 
+// Helper to handle proxy errors consistently
+const handleProxyError = (res, err, context) => {
+  const status = err.response?.status || 502;
+  const detail =
+    err.response?.data?.error ||
+    err.response?.data?.detail ||
+    err.response?.data?.message ||
+    err.message;
+  
+  console.error(`${context} error [HTTP ${status}]:`, detail);
+
+  let userFriendlyError = 'AI service unavailable';
+  if (status === 429) {
+    userFriendlyError = 'AI service rate limit reached or quota exhausted. Please try again shortly.';
+  } else if (status === 404) {
+    userFriendlyError = 'Session not found';
+  }
+
+  res.status(status).json({
+    error: userFriendlyError,
+    detail: typeof detail === 'string' ? detail : JSON.stringify(detail),
+    statusCode: status
+  });
+};
+
 // Create a new chat session
 app.post('/api/chat/session', async (req, res) => {
   try {
     const { data } = await axios.post(`${CHATBOT_API}/api/chat/session`);
     res.json(data);
   } catch (err) {
-    console.error('Chatbot session error:', err.message);
-    res.status(502).json({ error: 'AI service unavailable' });
+    handleProxyError(res, err, 'Chatbot session');
   }
 });
 
@@ -226,11 +250,7 @@ app.post('/api/chat/message', async (req, res) => {
     );
     res.json(data);
   } catch (err) {
-    console.error('Chatbot message error:', err.message);
-    if (err.response?.status === 404) {
-      return res.status(404).json({ error: 'Session not found' });
-    }
-    res.status(502).json({ error: 'AI service unavailable' });
+    handleProxyError(res, err, 'Chatbot message');
   }
 });
 
@@ -242,22 +262,19 @@ app.get('/api/chat/history/:sessionId', async (req, res) => {
     );
     res.json(data);
   } catch (err) {
-    console.error('Chatbot history error:', err.message);
-    if (err.response?.status === 404) {
-      return res.status(404).json({ error: 'Session not found' });
-    }
-    res.status(502).json({ error: 'AI service unavailable' });
+    handleProxyError(res, err, 'Chatbot history');
   }
 });
 
 const alive = setInterval(async () => {
   try {
-    // Ping Python AI service
-    await axios.get(`https://portfolio-r-vscy.onrender.com/api/wakeup`, { timeout: 10000 });
+    // Ping Python AI service using configured CHATBOT_API
+    await axios.get(`${CHATBOT_API}/api/wakeup`, { timeout: 10000 });
     console.log('Pinged AI service to keep it awake');
 
     // Ping Node backend itself
-    await axios.get(`https://portfolio-r-1.onrender.com/api/wake`, { timeout: 10000 });
+    const nodeUrl = process.env.NODE_BACKEND_URL || 'https://portfolio-r-1.onrender.com';
+    await axios.get(`${nodeUrl}/api/wake`, { timeout: 10000 });
     console.log('Pinged Node backend to keep it awake');
   } catch (err) {
     console.error('Failed to ping services:', err.message);

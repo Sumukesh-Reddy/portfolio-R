@@ -34,12 +34,22 @@ export const createChatSession = async (retries = 3) => {
     const response = await api.post('/api/chat/session');
     return response.data; // { sessionId }
   } catch (error) {
+    // Only retry on 502 (server waking up on Render), NEVER on 429 (rate limit) or 4xx
     if (error.response?.status === 502 && retries > 0) {
       console.warn(`Server waking up, retrying session init... (${retries} left)`);
       await new Promise(r => setTimeout(r, 3000));
       return createChatSession(retries - 1);
     }
-    throw error;
+    
+    const message =
+      error.response?.data?.error ||
+      (error.response?.status === 429
+        ? 'AI service rate limit reached or quota exhausted. Please try again shortly.'
+        : 'Could not connect to AI. Please try again later.');
+    const customError = new Error(message);
+    customError.status = error.response?.status;
+    customError.response = error.response;
+    throw customError;
   }
 };
 
@@ -51,12 +61,22 @@ export const sendChatMessage = async (sessionId, message, retries = 2) => {
     const response = await api.post('/api/chat/message', { sessionId, message });
     return response.data; // { answer }
   } catch (error) {
+    // Only retry on 502 (server waking up), NEVER on 429
     if (error.response?.status === 502 && retries > 0) {
       console.warn(`Server waking up, retrying send message... (${retries} left)`);
       await new Promise(r => setTimeout(r, 3000));
       return sendChatMessage(sessionId, message, retries - 1);
     }
-    throw error;
+
+    const messageText =
+      error.response?.data?.error ||
+      (error.response?.status === 429
+        ? 'AI rate limit reached. Please wait a moment before sending another message.'
+        : 'Failed to get a response from AI.');
+    const customError = new Error(messageText);
+    customError.status = error.response?.status;
+    customError.response = error.response;
+    throw customError;
   }
 };
 

@@ -134,29 +134,41 @@ export default function Chatbot() {
     scrollToBottom();
   }, [messages, isLoading, scrollToBottom]);
 
-  /* ── Initialize session on first open ── */
-  useEffect(() => {
-    if (!isOpen || sessionInitRef.current) return;
-    sessionInitRef.current = true;
-
-    const initSession = async () => {
-      try {
+  /* ── Initialize session ── */
+  const initSession = useCallback(async (isRetry = false) => {
+    try {
+      setError(null);
+      if (!isRetry) {
         // Restore session from localStorage
         const stored = localStorage.getItem('chatbot_session_id');
         if (stored) {
           setSessionId(stored);
           return;
         }
-        const data = await createChatSession();
+      }
+      const data = await createChatSession();
+      if (data?.sessionId) {
         setSessionId(data.sessionId);
         localStorage.setItem('chatbot_session_id', data.sessionId);
-      } catch (err) {
-        setError('Could not connect to AI. Please try again later.');
-        console.error('Session init error:', err);
+        setError(null);
       }
-    };
+    } catch (err) {
+      console.error('Session init error:', err);
+      const isRateLimited = err.status === 429 || err.message?.toLowerCase().includes('rate limit') || err.message?.toLowerCase().includes('quota');
+      setError(
+        isRateLimited
+          ? 'AI assistant is temporarily rate-limited. Please wait a moment and click Retry.'
+          : err.message || 'Could not connect to AI. Please try again later.'
+      );
+      sessionInitRef.current = false; // Allow retrying
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isOpen || sessionInitRef.current) return;
+    sessionInitRef.current = true;
     initSession();
-  }, [isOpen]);
+  }, [isOpen, initSession]);
 
   /* ── Focus input when chat opens ── */
   useEffect(() => {
@@ -183,7 +195,15 @@ export default function Chatbot() {
   /* ── Send message ── */
   const sendMessage = useCallback(async (text) => {
     const trimmed = text.trim();
-    if (!trimmed || isLoading || !sessionId) return;
+    if (!trimmed || isLoading) return;
+
+    let activeSessionId = sessionId;
+    if (!activeSessionId) {
+      // Create fallback session ID if backend session endpoint was unavailable
+      activeSessionId = `client_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+      setSessionId(activeSessionId);
+      localStorage.setItem('chatbot_session_id', activeSessionId);
+    }
 
     const userMsg = {
       id: Date.now(),
@@ -197,7 +217,7 @@ export default function Chatbot() {
     setError(null);
 
     try {
-      const data = await sendChatMessage(sessionId, trimmed);
+      const data = await sendChatMessage(activeSessionId, trimmed);
       const botMsg = {
         id: Date.now() + 1,
         role: 'bot',
@@ -208,7 +228,12 @@ export default function Chatbot() {
 
     } catch (err) {
       console.error('Chat error:', err);
-      setError('Failed to get a response. Is the AI server running?');
+      const isRateLimited = err.status === 429 || err.message?.toLowerCase().includes('rate limit') || err.message?.toLowerCase().includes('quota');
+      setError(
+        isRateLimited
+          ? 'Rate limit reached. Please wait a minute before sending another message.'
+          : err.message || 'Failed to get a response. Is the AI server running?'
+      );
     } finally {
       setIsLoading(false);
     }
@@ -342,7 +367,7 @@ export default function Chatbot() {
                       key={chip}
                       className="chatbot-chip"
                       onClick={() => sendMessage(CHIP_QUESTIONS[chip])}
-                      disabled={!sessionId}
+                      disabled={isLoading}
                     >
                       {chip}
                     </button>
@@ -413,7 +438,15 @@ export default function Chatbot() {
             {/* Error banner */}
             {error && (
               <div className="chatbot-error-banner">
-                ⚠️ {error}
+                <span className="chatbot-error-text">⚠️ {error}</span>
+                <button
+                  className="chatbot-retry-btn"
+                  onClick={() => initSession(true)}
+                  disabled={isLoading}
+                  title="Retry connection"
+                >
+                  Retry
+                </button>
               </div>
             )}
 
@@ -444,7 +477,7 @@ export default function Chatbot() {
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={handleKeyDown}
                 rows={1}
-                disabled={isLoading || !sessionId}
+                disabled={isLoading}
                 aria-label="Type your message"
               />
               <VoiceInput
@@ -461,7 +494,7 @@ export default function Chatbot() {
               id="chatbot-send-btn"
               className="chatbot-send-btn"
               onClick={() => sendMessage(inputValue)}
-              disabled={!inputValue.trim() || isLoading || !sessionId}
+              disabled={!inputValue.trim() || isLoading}
               aria-label="Send message"
               title="Send"
             >
