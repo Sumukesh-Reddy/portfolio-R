@@ -13,7 +13,7 @@ const ADMIN_EMAIL = 'sumukeshmopuram1@gmail.com';
 const CHATBOT_API =
   process.env.CHATBOT_API_URL ||
   (process.env.NODE_ENV === 'production'
-    ? 'https://portfolio-r-vscy.onrender.com'
+    ? 'https://portfolio-r-1.onrender.com'
     : 'http://localhost:8000');
 
 const app = express();
@@ -205,64 +205,109 @@ app.get('/api/admin/sessions', async (req, res) => {
 
 /* ─── Chatbot proxy routes ─── */
 
-// Helper to handle proxy errors consistently
-const handleProxyError = (res, err, context) => {
-  const status = err.response?.status || 502;
-  const detail =
-    err.response?.data?.error ||
-    err.response?.data?.detail ||
-    err.response?.data?.message ||
-    err.message;
+// Fallback knowledge base answering questions about Sumukesh
+const getFallbackAnswer = (message) => {
+  const q = (message || '').toLowerCase();
   
-  console.error(`${context} error [HTTP ${status}]:`, detail);
-
-  let userFriendlyError = 'AI service unavailable';
-  if (status === 429) {
-    userFriendlyError = 'AI service rate limit reached or quota exhausted. Please try again shortly.';
-  } else if (status === 404) {
-    userFriendlyError = 'Session not found';
+  if (q.includes('education') || q.includes('college') || q.includes('degree') || q.includes('study') || q.includes('school') || q.includes('iiit')) {
+    return "Sumukesh is pursuing his **B.Tech in Computer Science and Engineering (CSE)** at **IIIT Sri City** (2023–2027).\n\n" +
+      "• **Degree**: B.Tech in CSE, IIIT Sri City (2023–2027)\n" +
+      "• **Intermediate (MPC)**: Sri Chaitanya Junior College (2023)\n" +
+      "• Strong foundation in Data Structures, Algorithms, OOPs, and Operating Systems.";
+  }
+  
+  if (q.includes('project') || q.includes('built') || q.includes('work') || q.includes('app') || q.includes('portfolio')) {
+    return "Here are some of the key projects Sumukesh has built:\n\n" +
+      "1. **ORBIT AI – Enterprise Knowledge Assistant**: RAG-powered document assistant built with LangChain, FastAPI, and Gemini API for source-grounded search across PDFs and documents.\n" +
+      "2. **Plum OPD AI**: Automated insurance claim adjudication system extracting medical document data with Gemini and OCR.\n" +
+      "3. **ShelterSeek**: Full-stack hotel booking platform with real-time room tracking, role-based auth, and host/admin dashboards (Node.js, Express, MongoDB).\n" +
+      "4. **VachoLink**: Modern real-time chat application featuring live online presence indicators (React, Node.js, Socket.io, TailwindCSS).\n" +
+      "5. **Sorting Algorithm Visualizer**: Interactive web visualizer showing sorting algorithms like Bubble Sort in real-time.\n" +
+      "6. **Task Management (TODO App)**: Clean task manager with Google Authentication and CRUD operations.";
+  }
+  
+  if (q.includes('skill') || q.includes('tech') || q.includes('stack') || q.includes('language') || q.includes('tool')) {
+    return "Sumukesh's technical skillset covers:\n\n" +
+      "• **Languages**: Core Java (90%), C (85%), Python (75%), JavaScript (80%), SQL (70%)\n" +
+      "• **Web Development**: React, Node.js, Express, HTML5/CSS3, Socket.IO, SpringBoot\n" +
+      "• **Databases**: MongoDB, MySQL\n" +
+      "• **AI & ML**: Machine Learning, NLP, Neural Networks, LangChain, Gemini API\n" +
+      "• **Tools**: Git, Docker, Render, VS Code, TensorFlow, Pandas/NumPy";
+  }
+  
+  if (q.includes('contact') || q.includes('email') || q.includes('phone') || q.includes('reach') || q.includes('hire') || q.includes('message')) {
+    return "You can get in touch with Sumukesh directly:\n\n" +
+      "• **Email**: [sumukeshreddy.m23@iiits.in](mailto:sumukeshreddy.m23@iiits.in) or [sumukeshmopuram1@gmail.com](mailto:sumukeshmopuram1@gmail.com)\n" +
+      "• **Phone**: +91-8790787664\n" +
+      "• You can also use the **Contact Form** right below on this website to send a direct message!";
+  }
+  
+  if (q.includes('achievement') || q.includes('award') || q.includes('certificate') || q.includes('contest') || q.includes('codeforces') || q.includes('leetcode')) {
+    return "Sumukesh's key achievements and activities:\n\n" +
+      "• Active problem solver on **LeetCode** and **Codeforces**.\n" +
+      "• Coursera certifications in Full-Stack Web Development, Java, and Machine Learning.\n" +
+      "• Built real-world production projects including ORBIT AI and ShelterSeek.";
   }
 
-  res.status(status).json({
-    error: userFriendlyError,
-    detail: typeof detail === 'string' ? detail : JSON.stringify(detail),
-    statusCode: status
-  });
+  if (q.includes('hi') || q.includes('hello') || q.includes('hey') || q.includes('who are you') || q.includes('help')) {
+    return "Hello! I am **Sumukesh's AI Assistant**. Ask me anything about his:\n\n" +
+      "• 🎓 **Education** at IIIT Sri City\n" +
+      "• 💼 **Projects** (ORBIT AI, ShelterSeek, VachoLink, Plum AI)\n" +
+      "• 🛠️ **Technical Skills** (Java, Python, React, Node.js, AI)\n" +
+      "• 📫 **Contact details** and how to reach him";
+  }
+
+  return "I'm Sumukesh's AI assistant! Sumukesh is a CSE student at IIIT Sri City skilled in Full Stack Web Development (React, Node.js, MongoDB) and AI (Gemini, LangChain). Feel free to ask about his **projects**, **skills**, **education**, or **contact info**!";
 };
 
-// Create a new chat session
+// Create a new chat session - NEVER fails, ensures chatbot always opens!
 app.post('/api/chat/session', async (req, res) => {
   try {
-    const { data } = await axios.post(`${CHATBOT_API}/api/chat/session`);
-    res.json(data);
+    const { data } = await axios.post(`${CHATBOT_API}/api/chat/session`, {}, { timeout: 8000 });
+    if (data && data.sessionId) {
+      return res.json(data);
+    }
   } catch (err) {
-    handleProxyError(res, err, 'Chatbot session');
+    console.warn(`Upstream AI session init (${CHATBOT_API}) failed [HTTP ${err.response?.status || err.message}]. Using local session.`);
   }
+
+  // Graceful session creation: Never show an error banner to user on chat open!
+  const localSessionId = 'session_' + Date.now() + '_' + crypto.randomBytes(4).toString('hex');
+  res.json({ sessionId: localSessionId, isFallback: true });
 });
 
 // Send a chat message
 app.post('/api/chat/message', async (req, res) => {
+  const { sessionId, message } = req.body;
+
   try {
     const { data } = await axios.post(
       `${CHATBOT_API}/api/chat/message`,
       req.body,
-      { headers: { 'Content-Type': 'application/json' } }
+      { headers: { 'Content-Type': 'application/json' }, timeout: 25000 }
     );
-    res.json(data);
+    if (data && data.answer) {
+      return res.json(data);
+    }
   } catch (err) {
-    handleProxyError(res, err, 'Chatbot message');
+    console.warn(`Upstream AI message failed [HTTP ${err.response?.status || err.message}]. Using portfolio knowledge fallback.`);
   }
+
+  // Fallback response: if AI is rate-limited (429) or cold-starting (502), provide direct answer!
+  const answer = getFallbackAnswer(message);
+  res.json({ answer, isFallback: true });
 });
 
 // Fetch chat history
 app.get('/api/chat/history/:sessionId', async (req, res) => {
   try {
     const { data } = await axios.get(
-      `${CHATBOT_API}/api/chat/history/${req.params.sessionId}`
+      `${CHATBOT_API}/api/chat/history/${req.params.sessionId}`,
+      { timeout: 8000 }
     );
     res.json(data);
   } catch (err) {
-    handleProxyError(res, err, 'Chatbot history');
+    res.json({ messages: [] });
   }
 });
 
@@ -273,7 +318,7 @@ const alive = setInterval(async () => {
     console.log('Pinged AI service to keep it awake');
 
     // Ping Node backend itself
-    const nodeUrl = process.env.NODE_BACKEND_URL || 'https://portfolio-r-1.onrender.com';
+    const nodeUrl = process.env.NODE_BACKEND_URL || 'https://portfolio-r-vscy.onrender.com';
     await axios.get(`${nodeUrl}/api/wake`, { timeout: 10000 });
     console.log('Pinged Node backend to keep it awake');
   } catch (err) {
